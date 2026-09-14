@@ -4,7 +4,7 @@ namespace xUnit.Controllers;
 
 public class HomeController : Controller
 {
-    // GET
+    [Route("/")]
     public IActionResult Index()
     {
         return View();
