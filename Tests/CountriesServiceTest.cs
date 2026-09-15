@@ -92,6 +92,8 @@ public class CountriesServiceTest
         Assert.Contains(response, countries_from_GetAllCountries);
     }
     
+    //objA.Equals(objB)
+    
     #endregion
 
     #region GetAllCountries
