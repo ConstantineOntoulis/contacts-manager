@@ -1,6 +1,6 @@
 using Entities;
 
-namespace ServiceContracts.DTO;
+namespace ServiceContracts.DTO.CountryDTO;
 
 /// <summary>
 /// The extension version is chosen because this: country.ToCountryResponse(); ,reads naturally as 

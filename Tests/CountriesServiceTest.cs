@@ -1,6 +1,6 @@
 ﻿using ServiceContracts;
 using Entities;
-using ServiceContracts.DTO;
+using ServiceContracts.DTO.CountryDTO;
 using Services;
 
 namespace Tests;

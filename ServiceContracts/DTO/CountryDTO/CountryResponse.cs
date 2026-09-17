@@ -1,6 +1,6 @@
 using Entities;
 
-namespace ServiceContracts.DTO;
+namespace ServiceContracts.DTO.CountryDTO;
 
 /// <summary>
 /// DTO class that is used as return type for most of CountriesService methods
