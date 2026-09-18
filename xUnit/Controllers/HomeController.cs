@@ -9,4 +9,10 @@ public class HomeController : Controller
     {
         return View();
     }
+
+    [Route("/person")]
+    public IActionResult Person()
+    {
+        return View();
+    }
 }
