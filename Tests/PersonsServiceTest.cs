@@ -5,6 +5,7 @@ using ServiceContracts.DTO.CountryDTO;
 using ServiceContracts.DTO.PersonDTO;
 using ServiceContracts.Enums;
 using Services;
+using Xunit.Abstractions;
 
 namespace Tests;
 
@@ -12,17 +13,17 @@ public class PersonsServiceTest
 {
     //private fields
     private readonly IPersonsService _personsService;
-
     private readonly ICountriesService _countriesService;
+    private readonly ITestOutputHelper _testOutputHelper;
 
     //constructor
-    public PersonsServiceTest()
+    public PersonsServiceTest(ITestOutputHelper testOutputHelper)
     {
         _personsService = new PersonsService();
         _countriesService = new CountriesService();
+        _testOutputHelper  = testOutputHelper;
     }
-
-
+    
     #region AddPerson
 
     //When we supply null value as PersonAddRequest, it should throw ArgumentNullException
