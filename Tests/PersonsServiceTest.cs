@@ -203,15 +203,30 @@ public class PersonsServiceTest
 
         List<PersonResponse> responseList = new List<PersonResponse>();
 
+        
         foreach (PersonAddRequest personRequest in peopleRequests)
         {
             PersonResponse fullPeopleResponse = _personsService.AddPerson(personRequest);
             responseList.Add(fullPeopleResponse);
         }
         
+        //print person_response_list_from_add
+        _testOutputHelper.WriteLine("Expected: ");
+        foreach (PersonResponse person_response in responseList)
+        {
+            _testOutputHelper.WriteLine(person_response.ToString());
+        }
+        
         //Act
         List<PersonResponse> updatedList = _personsService.GetAllPersons();
 
+        //print person_response_list_from_add
+        _testOutputHelper.WriteLine("Expected: ");
+        foreach (PersonResponse person_update in updatedList)
+        {
+            _testOutputHelper.WriteLine(person_update.ToString());
+        }
+        
         //Assert
         foreach (PersonResponse added in responseList)
         {

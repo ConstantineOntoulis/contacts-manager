@@ -41,4 +41,9 @@ public class PersonResponse
     {
         return base.GetHashCode();
     }
+
+    public override string ToString()
+    {
+        return $"Person ID: {PersonID}, Person Name: {PersonName}, Email: {Email}, Date of Birth: {DateOfBirth?.ToString("dd MMM yyyy")}, Gender: {Gender}, CountryID: {CountryID}, Address: {Address}, ReceiveNewsLetters: {ReceiveNewsLetters}";
+    }
 }
