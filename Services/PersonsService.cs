@@ -2,11 +2,12 @@ using System.ComponentModel.DataAnnotations;
 using Entities;
 using ServiceContracts;
 using ServiceContracts.DTO.PersonDTO;
+using ServiceContracts.Enums;
 using Services.Helpers;
 
 namespace Services;
 
-public class PersonsService :IPersonsService
+public class PersonsService : IPersonsService
 {
     //Private field
     private readonly List<Person> _persons;
@@ -102,5 +103,10 @@ public class PersonsService :IPersonsService
         }
         
         return matchingPeople;
+    }
+
+    public List<PersonResponse> GetSortedPeople(List<PersonResponse> allPeople, string sortBy, SortOrderOptions sortOrder)
+    {
+        throw new NotImplementedException();
     }
 }
