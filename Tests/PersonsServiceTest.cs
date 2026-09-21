@@ -21,9 +21,9 @@ public class PersonsServiceTest
     {
         _personsService = new PersonsService();
         _countriesService = new CountriesService();
-        _testOutputHelper  = testOutputHelper;
+        _testOutputHelper = testOutputHelper;
     }
-    
+
     #region AddPerson
 
     //When we supply null value as PersonAddRequest, it should throw ArgumentNullException
@@ -203,20 +203,20 @@ public class PersonsServiceTest
 
         List<PersonResponse> responseList = new List<PersonResponse>();
 
-        
+
         foreach (PersonAddRequest personRequest in peopleRequests)
         {
             PersonResponse fullPeopleResponse = _personsService.AddPerson(personRequest);
             responseList.Add(fullPeopleResponse);
         }
-        
+
         //print person_response_list_from_add
         _testOutputHelper.WriteLine("Expected: ");
         foreach (PersonResponse person_response in responseList)
         {
             _testOutputHelper.WriteLine(person_response.ToString());
         }
-        
+
         //Act
         List<PersonResponse> updatedList = _personsService.GetAllPersons();
 
@@ -226,11 +226,189 @@ public class PersonsServiceTest
         {
             _testOutputHelper.WriteLine(person_update.ToString());
         }
-        
+
         //Assert
         foreach (PersonResponse added in responseList)
         {
             Assert.Contains(added, updatedList);
+        }
+    }
+
+    #endregion
+
+    #region GetFilteredPersons
+
+    //If the search text is empty and search by is "PersonName", it should return all people
+    [Fact]
+    public void GetFilteredPersons_EmptySearchText()
+    {
+        CountryAddRequest countryRequest1 = new CountryAddRequest() { CountryName = "Italy" };
+        CountryAddRequest countryRequest2 = new CountryAddRequest() { CountryName = "Japan" };
+
+
+        CountryResponse countryResponse1 = _countriesService.AddCountry(countryRequest1);
+        CountryResponse countryResponse2 = _countriesService.AddCountry(countryRequest2);
+
+        PersonAddRequest personRequest1 = new PersonAddRequest()
+        {
+            PersonName = "Name1",
+            Email = "person1@example.com",
+            Address = "Sample Address 1",
+            CountryID = countryResponse1.CountryID,
+            Gender = ServiceContracts.Enums.GenderOptions.Female,
+            DateOfBirth = DateTime.Parse("2000-01-01"),
+            ReceiveNewsLetters = true
+        };
+
+        PersonAddRequest personRequest2 = new PersonAddRequest()
+        {
+            PersonName = "Name2",
+            Email = "person2@example.com",
+            Address = "Sample Address 2",
+            CountryID = countryResponse2.CountryID,
+            Gender = ServiceContracts.Enums.GenderOptions.Male,
+            DateOfBirth = DateTime.Parse("2000-01-01"),
+            ReceiveNewsLetters = true
+        };
+
+        PersonAddRequest personRequest3 = new PersonAddRequest()
+        {
+            PersonName = "Name3",
+            Email = "person3@example.com",
+            Address = "Sample Address 3",
+            CountryID = countryResponse2.CountryID,
+            Gender = ServiceContracts.Enums.GenderOptions.Female,
+            DateOfBirth = DateTime.Parse("2000-01-01"),
+            ReceiveNewsLetters = true
+        };
+
+        List<PersonAddRequest> peopleRequests = new List<PersonAddRequest>()
+        {
+            personRequest1,
+            personRequest2,
+            personRequest3
+        };
+
+        List<PersonResponse> responseList = new List<PersonResponse>();
+
+
+        foreach (PersonAddRequest personRequest in peopleRequests)
+        {
+            PersonResponse fullPeopleResponse = _personsService.AddPerson(personRequest);
+            responseList.Add(fullPeopleResponse);
+        }
+
+        //print person_response_list_from_add
+        _testOutputHelper.WriteLine("Expected: ");
+        foreach (PersonResponse person_response in responseList)
+        {
+            _testOutputHelper.WriteLine(person_response.ToString());
+        }
+
+        //Act
+        List<PersonResponse> searchList = _personsService.GetFilteredPersons(nameof(Person.PersonName), "");
+
+        //print person_response_list_from_add
+        _testOutputHelper.WriteLine("Expected: ");
+        foreach (PersonResponse person_update in searchList)
+        {
+            _testOutputHelper.WriteLine(person_update.ToString());
+        }
+
+        //Assert
+        foreach (PersonResponse added in responseList)
+        {
+            Assert.Contains(added, searchList);
+        }
+    }
+
+    //First we will add a few people, and then we will search based on person name with some search string. It should return the matching people
+    [Fact]
+    public void GetFilteredPersons_SearchByPersonName()
+    {
+        CountryAddRequest countryRequest1 = new CountryAddRequest() { CountryName = "Italy" };
+        CountryAddRequest countryRequest2 = new CountryAddRequest() { CountryName = "Japan" };
+
+
+        CountryResponse countryResponse1 = _countriesService.AddCountry(countryRequest1);
+        CountryResponse countryResponse2 = _countriesService.AddCountry(countryRequest2);
+
+        PersonAddRequest personRequest1 = new PersonAddRequest()
+        {
+            PersonName = "Name1",
+            Email = "person1@example.com",
+            Address = "Sample Address 1",
+            CountryID = countryResponse1.CountryID,
+            Gender = ServiceContracts.Enums.GenderOptions.Female,
+            DateOfBirth = DateTime.Parse("2000-01-01"),
+            ReceiveNewsLetters = true
+        };
+
+        PersonAddRequest personRequest2 = new PersonAddRequest()
+        {
+            PersonName = "Name2",
+            Email = "person2@example.com",
+            Address = "Sample Address 2",
+            CountryID = countryResponse2.CountryID,
+            Gender = ServiceContracts.Enums.GenderOptions.Male,
+            DateOfBirth = DateTime.Parse("2000-01-01"),
+            ReceiveNewsLetters = true
+        };
+
+        PersonAddRequest personRequest3 = new PersonAddRequest()
+        {
+            PersonName = "Name3",
+            Email = "person3@example.com",
+            Address = "Sample Address 3",
+            CountryID = countryResponse2.CountryID,
+            Gender = ServiceContracts.Enums.GenderOptions.Female,
+            DateOfBirth = DateTime.Parse("2000-01-01"),
+            ReceiveNewsLetters = true
+        };
+
+        List<PersonAddRequest> peopleRequests = new List<PersonAddRequest>()
+        {
+            personRequest1,
+            personRequest2,
+            personRequest3
+        };
+
+        List<PersonResponse> responseList = new List<PersonResponse>();
+
+
+        foreach (PersonAddRequest personRequest in peopleRequests)
+        {
+            PersonResponse fullPeopleResponse = _personsService.AddPerson(personRequest);
+            responseList.Add(fullPeopleResponse);
+        }
+
+        //print person_response_list_from_add
+        _testOutputHelper.WriteLine("Expected: ");
+        foreach (PersonResponse person_response in responseList)
+        {
+            _testOutputHelper.WriteLine(person_response.ToString());
+        }
+
+        //Act
+        List<PersonResponse> searchList = _personsService.GetFilteredPersons(nameof(Person.PersonName), "na");
+
+        //print person_response_list_from_add
+        _testOutputHelper.WriteLine("Expected: ");
+        foreach (PersonResponse person_update in searchList)
+        {
+            _testOutputHelper.WriteLine(person_update.ToString());
+        }
+
+        //Assert
+        foreach (PersonResponse added in responseList)
+        {
+            if (added.PersonName != null)
+            {
+                if (added.PersonName.Contains("na", StringComparison.OrdinalIgnoreCase))
+                {
+                    Assert.Contains(added, searchList);
+                }
+            }
         }
     }
 
