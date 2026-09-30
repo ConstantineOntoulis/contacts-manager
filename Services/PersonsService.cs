@@ -91,7 +91,7 @@ public class PersonsService : IPersonsService
                 Address = "60724 La Follette Trail",
                 ReceiveNewsLetters = false,
                 CountryID = Guid.Parse("D2937E39-1913-49C8-B39D-C3F7FBFF42C2")
-            });
+            }); 
 
             _persons.Add(new Person()
             {
