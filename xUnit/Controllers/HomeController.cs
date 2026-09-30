@@ -4,6 +4,7 @@ namespace xUnit.Controllers;
 
 public class HomeController : Controller
 {
+    [Route("/persons/index")]
     [Route("/")]
     public IActionResult Index()
     {
