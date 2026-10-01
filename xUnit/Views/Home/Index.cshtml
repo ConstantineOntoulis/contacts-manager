@@ -5,25 +5,48 @@
     ViewBag.Title = "Persons";
 }
 
-<h1>Persons</h1>
-
-@Model
-
-<table class="table w-100 mt">
-    <thead>
-    <tr>
-        <th>Person Name</th>
-        <th>Email</th>
-        <th>Date of Birth</th>
-        <th>Age</th>
-        <th>Gender</th>
-        <th>Country</th>
-        <th>Address</th>
-        <td>Receive News Letters</td>
-    </tr>
-    </thead>
+<form action="~/persons/index" method="get">
     
-    <tbody>
+    <h1>Persons</h1>
+
+    <div class="box flex">
+        <div class="flex-1">
+            <select class="form-input" name="searchBy">
+                @foreach (var field in ViewBag.SearchFields)
+                {
+                    <option value="@field.Key">@field.Value</option>
+                }
+                @* Eg: searchBy = PersonName&searchString = abc *@
+            </select>
+        </div>
+
+        <div class="flex-1">
+            <input type="search" id="Search" class="form-input" placeholder="Search" name="searchString"/>
+        </div>
+
+        <div class="flex-1">
+            <button class="button button-blue-back">Search</button>
+            <a href="~/persons/index" class="link-hover">Clear all</a>
+        </div>
+    </div>
+
+
+
+    <table class="table w-100 mt">
+        <thead>
+        <tr>
+            <th>Person Name</th>
+            <th>Email</th>
+            <th>Date of Birth</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Country</th>
+            <th>Address</th>
+            <th>Receive News Letters</th>
+        </tr>
+        </thead>
+
+        <tbody>
         @foreach (PersonResponse person in Model)
         {
             <tr>
@@ -38,6 +61,7 @@
             </tr>
         }
         <tr></tr>
-    </tbody>
-    
-</table>
+        </tbody>
+
+    </table>
+</form>
