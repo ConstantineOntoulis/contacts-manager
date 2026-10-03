@@ -444,3 +444,27 @@ a.link-hover:hover
         width: auto;
     }
 }
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table-responsive table {
+    min-width: 1000px;
+}
+
+.table-responsive th,
+.table-responsive td {
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .box.flex {
+        flex-wrap: wrap;
+    }
+
+    .box.flex .flex-1 {
+        flex: 1 1 100%;
+    }
+}
