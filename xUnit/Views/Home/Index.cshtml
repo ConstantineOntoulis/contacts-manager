@@ -1,3 +1,4 @@
+@using Entities
 @using ServiceContracts.DTO.PersonDTO
 @model IEnumerable<ServiceContracts.DTO.PersonDTO.PersonResponse>
 
@@ -42,7 +43,33 @@
     <table class="table w-100 mt">
         <thead>
         <tr>
-            <th>Person Name</th>
+            @if (ViewBag.CurrentSortBy == nameof(PersonResponse.PersonName) && ViewBag.CurrentSortOrder == SortOrderOptions.ASC.ToString())
+            {
+                <th>
+                    <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@nameof(PersonResponse.PersonName)&sortOrder=@nameof(SortOrderOptions.DESC)">
+                        Person Name
+                    </a>
+                    <i class="fa-solid fa-sort-up"></i>
+                </th>
+            }
+            else if (ViewBag.CurrentSortBy == nameof(PersonResponse.PersonName) && ViewBag.CurrentSortOrder == SortOrderOptions.DESC.ToString())
+            {
+                <th>
+                    <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@nameof(PersonResponse.PersonName)&sortOrder=@nameof(SortOrderOptions.ASC)">
+                        Person Name
+                    </a>
+                    <i class="fa-solid fa-sort-down"></i>
+                </th>
+            }
+            else
+            {
+                <th>
+                    <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@nameof(PersonResponse.PersonName)&sortOrder=@nameof(SortOrderOptions.ASC)">
+                        Person Name
+                    </a>
+                </th>
+            }
+            
             <th>Email</th>
             <th>Date of Birth</th>
             <th>Age</th>

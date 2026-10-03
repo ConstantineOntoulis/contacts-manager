@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ServiceContracts;
 using ServiceContracts.DTO.PersonDTO;
+using ServiceContracts.Enums;
 
 namespace xUnit.Controllers;
 
@@ -17,8 +18,9 @@ public class HomeController : Controller
     
     [Route("/")]
     [Route("/persons/index")]
-    public IActionResult Index(string searchBy, string? searchString)
+    public IActionResult Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
     {
+        //Search
         ViewBag.SearchFields = new Dictionary<string, string>()
         {
             { nameof(PersonResponse.PersonName), "Person Name" },
@@ -33,6 +35,11 @@ public class HomeController : Controller
         ViewBag.CurrentSearchBy = searchBy;
         ViewBag.CurrentSearchString = searchString;
         
-        return View(persons); //Views/Home/Index.cshtml
+        //Sort
+        List<PersonResponse> sortedPeople = _personsService.GetSortedPeople(persons, sortBy, sortOrder);
+        ViewBag.CurrentSortBy = sortBy;
+        ViewBag.CurrentSortOrder = sortOrder.ToString();
+        
+        return View(sortedPeople); //Views/Home/Index.cshtml
     }
 }
