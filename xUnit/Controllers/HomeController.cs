@@ -58,4 +58,26 @@ public class HomeController : Controller
         
         return View();
     }
+
+    [Route("/persons/add")]
+    [HttpPost]
+    public IActionResult Create(PersonAddRequest personAddRequest)
+    {
+        if (!ModelState.IsValid)
+        {
+            List<CountryResponse> countries = _countriesService.GetAllCountries();
+        
+            ViewBag.Countries = countries;
+            
+            ViewBag.Errors = ModelState.Values.SelectMany(x => x.Errors).Select(e => e.ErrorMessage).ToList();
+            
+            return View("CreatePerson", personAddRequest);
+        }
+        
+        //call the service method
+        PersonResponse personResponse = _personsService.AddPerson(personAddRequest);
+        
+        //navigate to Index() action method (it makes another get request to "persons/index"
+        return RedirectToAction("Index", "Home");
+    }
 }
