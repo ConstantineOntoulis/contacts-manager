@@ -141,13 +141,19 @@ public class PersonsServiceTest
 
     //The GetAllPersons() should return an empty list by default
     [Fact]
-    public void GetAllPersons_EmptyList()
+    public void GetAllPersons_ReturnsExistingPersons()
     {
         //Act
-        List<PersonResponse> persons_from_get = _personsService.GetAllPersons();
+        List<PersonResponse> persons_from_get =
+            _personsService.GetAllPersons();
 
         //Assert
-        Assert.Empty(persons_from_get);
+        Assert.NotEmpty(persons_from_get);
+
+        Assert.All(persons_from_get, person =>
+        {
+            Assert.NotEqual(Guid.Empty, person.PersonID);
+        });
     }
 
     //First, we will add few persons; and then when we call GetAllPersons(), it should return the same persons that were added
@@ -420,89 +426,42 @@ public class PersonsServiceTest
     [Fact]
     public void GetSortedPeople()
     {
-        CountryAddRequest countryRequest1 = new CountryAddRequest() { CountryName = "Italy" };
-        CountryAddRequest countryRequest2 = new CountryAddRequest() { CountryName = "Japan" };
-
-
-        CountryResponse countryResponse1 = _countriesService.AddCountry(countryRequest1);
-        CountryResponse countryResponse2 = _countriesService.AddCountry(countryRequest2);
-
-        PersonAddRequest personRequest1 = new PersonAddRequest()
+        //Arrange
+        List<PersonResponse> allPeople = new List<PersonResponse>()
         {
-            PersonName = "Name1",
-            Email = "person1@example.com",
-            Address = "Sample Address 1",
-            CountryID = countryResponse1.CountryID,
-            Gender = ServiceContracts.Enums.GenderOptions.Female,
-            DateOfBirth = DateTime.Parse("2000-01-01"),
-            ReceiveNewsLetters = true
+            new PersonResponse()
+            {
+                PersonID = Guid.NewGuid(),
+                PersonName = "Name1"
+            },
+
+            new PersonResponse()
+            {
+                PersonID = Guid.NewGuid(),
+                PersonName = "Name2"
+            },
+
+            new PersonResponse()
+            {
+                PersonID = Guid.NewGuid(),
+                PersonName = "Name3"
+            }
         };
-
-        PersonAddRequest personRequest2 = new PersonAddRequest()
-        {
-            PersonName = "Name2",
-            Email = "person2@example.com",
-            Address = "Sample Address 2",
-            CountryID = countryResponse2.CountryID,
-            Gender = ServiceContracts.Enums.GenderOptions.Male,
-            DateOfBirth = DateTime.Parse("2000-01-01"),
-            ReceiveNewsLetters = true
-        };
-
-        PersonAddRequest personRequest3 = new PersonAddRequest()
-        {
-            PersonName = "Name3",
-            Email = "person3@example.com",
-            Address = "Sample Address 3",
-            CountryID = countryResponse2.CountryID,
-            Gender = ServiceContracts.Enums.GenderOptions.Female,
-            DateOfBirth = DateTime.Parse("2000-01-01"),
-            ReceiveNewsLetters = true
-        };
-
-        List<PersonAddRequest> peopleRequests = new List<PersonAddRequest>()
-        {
-            personRequest1,
-            personRequest2,
-            personRequest3
-        };
-
-        List<PersonResponse> responseList = new List<PersonResponse>();
-
-
-        foreach (PersonAddRequest personRequest in peopleRequests)
-        {
-            PersonResponse fullPeopleResponse = _personsService.AddPerson(personRequest);
-            responseList.Add(fullPeopleResponse);
-        }
-
-        //print person_response_list_from_add
-        _testOutputHelper.WriteLine("Expected: ");
-        foreach (PersonResponse person_response in responseList)
-        {
-            _testOutputHelper.WriteLine(person_response.ToString());
-        }
-
-        List<PersonResponse> allPeople = _personsService.GetAllPersons();
 
         //Act
         List<PersonResponse> sortList =
-            _personsService.GetSortedPeople(allPeople, nameof(Person.PersonName), SortOrderOptions.DESC);
-
-        //print person_response_list_from_add
-        _testOutputHelper.WriteLine("Actual: ");
-        foreach (PersonResponse person_update in sortList)
-        {
-            _testOutputHelper.WriteLine(person_update.ToString());
-        }
-
-        responseList = responseList.OrderByDescending(temp => temp.PersonName).ToList();
+            _personsService.GetSortedPeople(
+                allPeople,
+                nameof(PersonResponse.PersonName),
+                SortOrderOptions.DESC
+            );
 
         //Assert
-        for (int i = 0; i < responseList.Count; i++)
-        {
-            Assert.Equal(responseList[i], sortList[i]);
-        }
+        Assert.Equal(3, sortList.Count);
+
+        Assert.Equal("Name3", sortList[0].PersonName);
+        Assert.Equal("Name2", sortList[1].PersonName);
+        Assert.Equal("Name1", sortList[2].PersonName);
     }
 
     #endregion
