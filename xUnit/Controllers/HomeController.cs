@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
 using ServiceContracts.DTO.CountryDTO;
 using ServiceContracts.DTO.PersonDTO;
@@ -54,8 +55,17 @@ public class HomeController : Controller
     public IActionResult CreatePerson()
     {
         List<CountryResponse> countries = _countriesService.GetAllCountries();
-        
-        ViewBag.Countries = countries;
+
+        ViewBag.Countries = countries.Select(temp => new SelectListItem()
+        {
+            Text = temp.CountryName,
+            Value = temp.CountryID.ToString()
+        });
+        /*{
+            Text = "Tino",
+            Value = "1"
+        };*/
+        //this is like writting <option value="1">Tino</option>
         
         return View();
     }
