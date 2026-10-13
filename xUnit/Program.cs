@@ -1,7 +1,10 @@
+using System.Globalization;
 using ServiceContracts;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var culture = new CultureInfo("en-GB");
 
 builder.Services.AddControllersWithViews();
 
