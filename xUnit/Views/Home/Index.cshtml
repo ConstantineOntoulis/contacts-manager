@@ -1,3 +1,4 @@
+@using System.Globalization
 @using Entities
 @using ServiceContracts.DTO.PersonDTO
 @model IEnumerable<ServiceContracts.DTO.PersonDTO.PersonResponse>
@@ -92,6 +93,9 @@
                     { "ColumnName", nameof(PersonResponse.ReceiveNewsLetters) },
                     { "DisplayName", "Receive News Letters" },
                 })
+                
+                <th>Options</th>
+                
             </tr>
             </thead>
 
@@ -101,12 +105,16 @@
                 <tr>
                     <td>@person.PersonName</td>
                     <td>@person.Email</td>
-                    <td>@person.DateOfBirth?.ToString("dd MMM yyyy")</td>
+                    <td>@person.DateOfBirth?.ToString("dd MMM yyyy", CultureInfo.InvariantCulture)</td>
                     <td>@person.Age</td>
                     <td>@person.Gender</td>
                     <td>@person.Country</td>
                     <td>@person.Address</td>
                     <td>@person.ReceiveNewsLetters</td>
+                    <td style="width: 20%">
+                        <a asp-controller="Home" asp-action="EditPerson" asp-route-personID="@person.PersonID">Edit</a>
+                        @*/Persons/Edit/1*@
+                    </td>
                 </tr>
             }
             <tr></tr>
