@@ -14,7 +14,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<ICountriesService, CountriesService>();
 builder.Services.AddSingleton<IPersonsService, PersonsService>();
 
-builder.Services.AddDbContext<PersonsDbContext>(options => options.UseSqlServer());
+builder.Services.AddDbContext<PersonsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ContactsDb;Integrated Security=True;Encrypt=False
 
 var app = builder.Build();
 
