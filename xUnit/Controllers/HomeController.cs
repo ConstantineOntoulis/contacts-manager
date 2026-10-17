@@ -66,7 +66,7 @@ public class HomeController : Controller
             Text = "Tino",
             Value = "1"
         };*/
-        //this is like writting <option value="1">Tino</option>
+        //this is like writing <option value="1">Tino</option>
         
         return View();
     }
