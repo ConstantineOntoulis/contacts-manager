@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Entities;
 using ServiceContracts;
 using ServiceContracts.DTO.PersonDTO;
@@ -28,7 +27,7 @@ public class PersonsService : IPersonsService
         return personResponse;
     }
 
-    public PersonResponse AddPerson(PersonAddRequest personAddRequest)
+    public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
     {
         //check if PersonAddRequest is not null
         if (personAddRequest == null)
@@ -46,9 +45,10 @@ public class PersonsService : IPersonsService
         person.PersonID = Guid.NewGuid();
 
         //add person object to persons list
-        _db.Persons
+        /*_db.Persons
             .Add(person);
-        _db.SaveChanges();
+        _db.SaveChanges(); */
+        _db.sp_AddPerson(person);
         
         //convert the Person Object into PersonResponse type
         return ConvertPersonToPersonResponse(person);
