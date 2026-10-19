@@ -63,6 +63,8 @@ public class PersonsService : IPersonsService
         */
         return _db.sp_GetAllPersons()
             .Select(temp => ConvertPersonToPersonResponse(temp)).ToList();
+        
+        //Need to do the same or UPDATE and DELETE Person!!
     }
 
     public PersonResponse? GetPersonByPersonID(Guid? personID)
