@@ -56,7 +56,7 @@ public class PersonResponse
             PersonName = PersonName,
             Email = Email,
             DateOfBirth = DateOfBirth,
-            Gender = (GenderOptions)Enum.Parse(typeof(GenderOptions), Gender, true),
+            Gender = Enum.TryParse<GenderOptions>(Gender, true, out var parsedGender) && Enum.IsDefined(parsedGender) ? parsedGender : null,
             Address = Address,
             CountryID = CountryID,
             ReceiveNewsLetters = ReceiveNewsLetters
