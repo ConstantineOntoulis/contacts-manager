@@ -12,4 +12,5 @@ public class Country
     
     public string? CountryName { get; set; }
     
+    public virtual ICollection<Person>? Persons { get; set; }
 }
