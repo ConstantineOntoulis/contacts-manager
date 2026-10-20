@@ -150,7 +150,7 @@ namespace Entities.Migrations
                             CountryID = new Guid("56bf46a4-02b8-4693-a0f5-0a95e2218bdc"),
                             DateOfBirth = new DateTime(1995, 2, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "ttregona4@stumbleupon.com",
-                            Gender = "Gender",
+                            Gender = "Female",
                             PersonName = "Tani",
                             ReceiveNewsLetters = false
                         },
