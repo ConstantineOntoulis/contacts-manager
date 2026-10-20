@@ -16,6 +16,8 @@ public class PersonUpdateRequest
     
     [Required(ErrorMessage = "Email can't be blank")]
     [EmailAddress(ErrorMessage = "Email value should be a valid email")]
+    [StringLength(50, ErrorMessage = "Email can't be longer than 50 characters")]
+    [DataType(DataType.EmailAddress)]
     public string? Email { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public GenderOptions? Gender { get; set; }
