@@ -102,7 +102,10 @@ namespace Entities.Migrations
 
                     b.HasKey("PersonID");
 
-                    b.ToTable("Persons", (string)null);
+                    b.ToTable("Persons", null, t =>
+                        {
+                            t.HasCheckConstraint("CHK_TIN", "len([TaxIdentificationNumber]) = 8");
+                        });
 
                     b.HasData(
                         new
