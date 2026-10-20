@@ -94,43 +94,49 @@ public class PersonsService : IPersonsService
         {
             case nameof(PersonResponse.PersonName):
                 matchingPeople = allPeople.Where(temp =>
-                    (!string.IsNullOrEmpty(temp.PersonName)
-                        ? temp.PersonName.Contains(searchString, StringComparison.OrdinalIgnoreCase)
-                        : true)).ToList();
-                break;
-            case nameof(PersonResponse.Email):
-                matchingPeople = allPeople.Where(temp =>
-                    (!string.IsNullOrEmpty(temp.Email)
-                        ? temp.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase)
-                        : true)).ToList();
-                break;
-            case nameof(PersonResponse.DateOfBirth):
-                matchingPeople = allPeople.Where(temp =>
-                    (temp.DateOfBirth != null)
-                        ? temp.DateOfBirth.Value.ToString("dd MMMM yyyy")
-                            .Contains(searchString, StringComparison.OrdinalIgnoreCase)
-                        : true).ToList();
-                break;
-            case nameof(PersonResponse.Gender):
-                matchingPeople = allPeople.Where(temp =>
-                    (!string.IsNullOrEmpty(temp.Gender)
-                        ? temp.Gender.Contains(searchString, StringComparison.OrdinalIgnoreCase)
-                        : true)).ToList();
-                break;
-            case nameof(PersonResponse.CountryID):
-                matchingPeople = allPeople.Where(temp =>
-                    (!string.IsNullOrEmpty(temp.Country)
-                        ? temp.Country.Contains(searchString, StringComparison.OrdinalIgnoreCase)
-                        : true)).ToList();
-                break;
-            case nameof(PersonResponse.Address):
-                matchingPeople = allPeople.Where(temp =>
-                    (!string.IsNullOrEmpty(temp.Address)
-                        ? temp.Address.Contains(searchString, StringComparison.OrdinalIgnoreCase)
-                        : true)).ToList();
+                    temp.PersonName?.Contains(
+                        searchString,
+                        StringComparison.OrdinalIgnoreCase) == true).ToList();
                 break;
 
-            default: matchingPeople = allPeople; break;
+            case nameof(PersonResponse.Email):
+                matchingPeople = allPeople.Where(temp =>
+                    temp.Email?.Contains(
+                        searchString,
+                        StringComparison.OrdinalIgnoreCase) == true).ToList();
+                break;
+
+            case nameof(PersonResponse.DateOfBirth):
+                matchingPeople = allPeople.Where(temp =>
+                    temp.DateOfBirth?.ToString("dd MMM yyyy")
+                        .Contains(searchString,
+                            StringComparison.OrdinalIgnoreCase) == true).ToList();
+                break;
+
+            case nameof(PersonResponse.Gender):
+                matchingPeople = allPeople.Where(temp =>
+                    temp.Gender?.Contains(
+                        searchString,
+                        StringComparison.OrdinalIgnoreCase) == true).ToList();
+                break;
+
+            case nameof(PersonResponse.CountryID):
+                matchingPeople = allPeople.Where(temp =>
+                    temp.Country?.Contains(
+                        searchString,
+                        StringComparison.OrdinalIgnoreCase) == true).ToList();
+                break;
+
+            case nameof(PersonResponse.Address):
+                matchingPeople = allPeople.Where(temp =>
+                    temp.Address?.Contains(
+                        searchString,
+                        StringComparison.OrdinalIgnoreCase) == true).ToList();
+                break;
+
+            default:
+                matchingPeople = allPeople;
+                break;
         }
 
         return matchingPeople;
