@@ -35,6 +35,12 @@ public class PersonsDbContext : DbContext
         {
             modelBuilder.Entity<Person>().HasData(person);
         }
+        
+        //Fluent API
+        modelBuilder.Entity<Person>().Property(temp => temp.TIN)
+            .HasColumnName("TaxIdentificationNumber")
+            .HasColumnType("varchar(8)")
+            .HasDefaultValue("ABC12345");
     }
 
     public List<Person> sp_GetAllPersons()

@@ -95,7 +95,10 @@ namespace Entities.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("TIN")
-                        .HasColumnType("nvarchar(max)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(8)")
+                        .HasDefaultValue("ABC12345")
+                        .HasColumnName("TaxIdentificationNumber");
 
                     b.HasKey("PersonID");
 
