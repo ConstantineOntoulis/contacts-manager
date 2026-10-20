@@ -75,4 +75,14 @@ public class PersonsDbContext : DbContext
         
         return Database.ExecuteSqlRaw("EXECUTE [dbo].[UpdatePerson] @PersonID, @PersonName, @Email, @DateOfBirth, @Gender, @CountryID, @Address, @ReceiveNewsLetters", parameters);
     }
+
+    public void sp_DeletePerson(Guid personID)
+    {
+        SqlParameter[] parameters = new SqlParameter[]
+        {
+            new SqlParameter("@PersonID", personID),
+        };
+        
+        Database.ExecuteSqlRaw("EXECUTE [dbo].[DeletePerson] @PersonID", parameters);
+    }
 }
