@@ -242,15 +242,13 @@ public class PersonsService : IPersonsService
             throw new ArgumentNullException(nameof(personID));
         }
 
-        Person? person = _db.Persons
-            .FirstOrDefault(temp => temp.PersonID == personID);
+        bool personExists = _db.Persons
+            .Any(temp => temp.PersonID == personID.Value);
 
-        if (person == null)
+        if (!personExists)
             return false;
-
-        _db.Persons.Remove(_db.Persons.First(temp => temp.PersonID == personID));
-
-        _db.SaveChanges();
+        
+        _db.sp_DeletePerson(personID.Value);
         
         return true;
     }
