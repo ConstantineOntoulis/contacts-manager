@@ -10,10 +10,12 @@ public class PersonAddRequest
     /// Acts as a DTO for inserting a new person
     /// </summary>
     [Required(ErrorMessage = "Person Name can't be blank")]
+    [StringLength(50, ErrorMessage = "Person Name cannot exceed 50 characters")]
     public string? PersonName { get; set; }
     
     [Required(ErrorMessage = "Email can't be blank")]
     [EmailAddress(ErrorMessage = "Email value should be a valid email")]
+    [StringLength(50, ErrorMessage = "Email cannot exceed 50 characters")]
     [DataType(DataType.EmailAddress)]
     public string? Email { get; set; }
     
@@ -25,6 +27,7 @@ public class PersonAddRequest
     
     [Required(ErrorMessage = "Please select a country")]
     public Guid? CountryID { get; set; }
+    [StringLength(200, ErrorMessage = "Address cannot exceed 200 characters")]
     public string? Address { get; set; }
     public bool ReceiveNewsLetters { get; set; }
 
