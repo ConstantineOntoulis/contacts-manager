@@ -151,7 +151,7 @@ public class HomeController : Controller
             
             ViewBag.Errors = ModelState.Values.SelectMany(x => x.Errors).Select(e => e.ErrorMessage).ToList();
 
-            return View(personResponse.ToPersonUpdateRequest());
+            return View("EditPerson", personUpdateRequest);
         }
     }
 
