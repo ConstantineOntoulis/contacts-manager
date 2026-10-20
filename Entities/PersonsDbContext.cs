@@ -58,4 +58,21 @@ public class PersonsDbContext : DbContext
         return Database.ExecuteSqlRaw(
             "EXECUTE [dbo].[AddPerson] @PersonID, @PersonName, @DateOfBirth, @Gender, @CountryID, @Address, @ReceiveNewsLetters", parameters);
     }
+
+    public int sp_UpdatePerson(Person person)
+    {
+        SqlParameter[] parameters = new SqlParameter[]
+        {
+            new SqlParameter("@PersonID", person.PersonID),
+            new SqlParameter("@PersonName", person.PersonName),
+            new SqlParameter("@Email", person.Email),
+            new SqlParameter("@DateOfBirth", person.DateOfBirth),
+            new SqlParameter("@Gender", person.Gender),
+            new SqlParameter("@CountryID", person.CountryID),
+            new SqlParameter("@Address", person.Address),
+            new SqlParameter("@ReceiveNewsLetters", person.ReceiveNewsLetters)
+        };
+        
+        return Database.ExecuteSqlRaw("EXECUTE [dbo].[UpdatePerson] @PersonID, @PersonName, @Email, @DateOfBirth, @Gender, @CountryID, @Address, @ReceiveNewsLetters", parameters);
+    }
 }

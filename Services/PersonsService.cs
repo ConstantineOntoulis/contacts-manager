@@ -1,4 +1,5 @@
 using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO.PersonDTO;
 using ServiceContracts.Enums;
@@ -206,8 +207,9 @@ public class PersonsService : IPersonsService
         ValidationHelper.ModelValidation(personUpdateRequest);
 
         //get matching person object to update
-        Person? matchingPerson = _db.Persons.
-            FirstOrDefault(temp => temp.PersonID == personUpdateRequest.PersonID);
+        Person? matchingPerson = _db.Persons
+            .AsNoTracking()
+            .FirstOrDefault(temp => temp.PersonID == personUpdateRequest.PersonID);
 
         if (matchingPerson == null)
         {
@@ -223,7 +225,7 @@ public class PersonsService : IPersonsService
         matchingPerson.Address = personUpdateRequest.Address;
         matchingPerson.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
 
-        _db.SaveChanges(); //UPDATE
+        _db.sp_UpdatePerson(matchingPerson); //UPDATE
         return ConvertPersonToPersonResponse(matchingPerson);
     }
 
