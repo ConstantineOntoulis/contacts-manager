@@ -43,7 +43,7 @@ public interface IPersonsService
     /// <param name="sortBy">Name of the property (key), based on which the people should be sorted</param>
     /// <param name="sortOrder">ASC or DESC</param>
     /// <returns>Returns sorted people as PersonResponse list</returns>
-    List<PersonResponse> GetSortedPeople(List<PersonResponse> allPeople, string sortBy, SortOrderOptions sortOrder);
+    Task<List<PersonResponse>> GetSortedPeople(List<PersonResponse> allPeople, string sortBy, SortOrderOptions sortOrder);
     
     Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest);
 
