@@ -1,3 +1,5 @@
+using System.Globalization;
+using CsvHelper;
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
@@ -248,5 +250,29 @@ public class PersonsService : IPersonsService
         _db.sp_DeletePerson(personID.Value);
         
         return true;
+    }
+
+    public async Task<MemoryStream> GetPersonsCSV()
+    {
+        MemoryStream memoryStream = new MemoryStream();
+        StreamWriter streamWriter = new StreamWriter(memoryStream);
+        CsvWriter csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture, leaveOpen: true);
+        
+        //Writes all property names as headings. Eg: Id, Name
+        csvWriter.WriteHeader<PersonResponse>(); //PersonID, PersonName...
+        csvWriter.NextRecord();
+
+        List<PersonResponse> persons = _db.Persons
+            .Include("Country")
+            .Select(temp => temp.ToPersonResponse()).ToList();
+        
+        //Writes all objects in the given collection Eg: Id, Name
+        //                                               1, abc
+        //                                               2, def
+        await csvWriter.WriteRecordsAsync(persons);
+        //1,abc,...
+
+        memoryStream.Position = 0;
+        return memoryStream;
     }
 }
