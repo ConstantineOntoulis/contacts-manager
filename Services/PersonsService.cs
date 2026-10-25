@@ -1,5 +1,6 @@
 using System.Globalization;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
@@ -256,22 +257,55 @@ public class PersonsService : IPersonsService
     {
         MemoryStream memoryStream = new MemoryStream();
         StreamWriter streamWriter = new StreamWriter(memoryStream);
-        CsvWriter csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture, leaveOpen: true);
+
+        CsvConfiguration csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture);
+        
+        CsvWriter csvWriter = new CsvWriter(streamWriter, csvConfiguration);
         
         //Writes all property names as headings. Eg: Id, Name
-        csvWriter.WriteHeader<PersonResponse>(); //PersonID, PersonName...
+        //csvWriter.WriteHeader<PersonResponse>(); //PersonID, PersonName...
+        
+        //PersonName, Email, DateOfBirth, Age, Gender, Country, Address, ReceiveNewsLetters
+        csvWriter.WriteField(nameof(PersonResponse.PersonName));
+        csvWriter.WriteField(nameof(PersonResponse.Email));
+        csvWriter.WriteField(nameof(PersonResponse.DateOfBirth));
+        csvWriter.WriteField(nameof(PersonResponse.Age));
+        csvWriter.WriteField(nameof(PersonResponse.Gender));
+        csvWriter.WriteField(nameof(PersonResponse.Country));
+        csvWriter.WriteField(nameof(PersonResponse.Address));
+        csvWriter.WriteField(nameof(PersonResponse.ReceiveNewsLetters));
+        
         csvWriter.NextRecord();
 
         List<PersonResponse> persons = _db.Persons
             .Include("Country")
             .Select(temp => temp.ToPersonResponse()).ToList();
+
+        foreach (PersonResponse person in persons)
+        {
+            csvWriter.WriteField(person.PersonName);
+            csvWriter.WriteField(person.Email);
+            if (person.DateOfBirth.HasValue)
+                csvWriter.WriteField(person.DateOfBirth.Value.ToString("dd-MM-yyyy"));
+            else
+                csvWriter.WriteField("");
+            
+            csvWriter.WriteField(nameof(person.Age));
+            csvWriter.WriteField(nameof(person.Gender));
+            csvWriter.WriteField(nameof(person.Country));
+            csvWriter.WriteField(nameof(person.Address));
+            csvWriter.WriteField(nameof(person.ReceiveNewsLetters));
+            
+            csvWriter.NextRecord();
+            csvWriter.Flush();
+        }
         
         //Writes all objects in the given collection Eg: Id, Name
         //                                               1, abc
         //                                               2, def
-        await csvWriter.WriteRecordsAsync(persons);
+        //await csvWriter.WriteRecordsAsync(persons);
         //1,abc,...
-
+        
         memoryStream.Position = 0;
         return memoryStream;
     }
