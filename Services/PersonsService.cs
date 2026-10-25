@@ -327,6 +327,13 @@ public class PersonsService : IPersonsService
             workSheet.Cells["G1"].Value = "Address";
             workSheet.Cells["H1"].Value = "Receive News Letters";
 
+            using (ExcelRange headerCells = workSheet.Cells["A1:H1"])
+            {
+                headerCells.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                headerCells.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                headerCells.Style.Font.Bold = true;
+            }
+            
             int row = 2;
             
             List<PersonResponse> persons = _db.Persons
