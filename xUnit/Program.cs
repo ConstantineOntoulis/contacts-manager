@@ -3,8 +3,11 @@ using Entities;
 using ServiceContracts;
 using Services;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 
 var builder = WebApplication.CreateBuilder(args);
+
+ExcelPackage.License.SetNonCommercialPersonal("Tino");
 
 var culture = new CultureInfo("en-GB");
 
