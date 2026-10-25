@@ -186,7 +186,7 @@ public class HomeController : Controller
         return RedirectToAction("Index");
     }
 
-    [Route("persons/PersonsPDF")]
+    [Route("/PersonsPDF")]
     public async Task<IActionResult> PersonsPDF()
     {
         //Get list of persons
@@ -206,11 +206,19 @@ public class HomeController : Controller
         };
     }
 
-    [Route("persons/PersonsCSV")]
+    [Route("/PersonsCSV")]
     public async Task<IActionResult> PersonsCSV()
     {
         MemoryStream memoryStream = await _personsService.GetPersonsCSV();
 
         return File(memoryStream, "application/octet-stream", "persons.csv");
+    }
+    
+    [Route("/PersonsExcel")]
+    public async Task<IActionResult> PersonsExcel()
+    {
+        MemoryStream memoryStream = await _personsService.GetPersonsExcel();
+
+        return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "persons.xlsx");
     }
 }
