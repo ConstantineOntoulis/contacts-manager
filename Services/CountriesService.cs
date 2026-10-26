@@ -73,43 +73,39 @@ public class CountriesService : ICountriesService
 
     public async Task<int> UploadCountriesFromExcelFile(IFormFile formFile)
     {
-        MemoryStream memoryStream = new MemoryStream();
+        using var stream = new MemoryStream();
+        await formFile.CopyToAsync(stream);
+        stream.Position = 0;
 
-        await formFile.CopyToAsync(memoryStream);
+        using var package = new ExcelPackage(stream);
 
-        int countriesInserted = 0;
-        
-        using (ExcelPackage excelPackage = new ExcelPackage(memoryStream))
+        var worksheet = package.Workbook.Worksheets["Countries"]
+                        ?? throw new InvalidDataException("Countries worksheet not found.");
+
+        var existingNames = (await _db.Countries
+                .Select(c => c.CountryName)
+                .ToListAsync())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var newCountries = new List<Country>();
+        var lastRow = worksheet.Dimension?.End.Row ?? 1;
+
+        for (var row = 2; row <= lastRow; row++)
         {
-            ExcelWorksheet workSheet = excelPackage.Workbook.Worksheets["Countries"];
+            var name = worksheet.Cells[row, 1].Text.Trim();
 
-            int rowCount = workSheet.Dimension.Rows;
-            
-            for (int row = 2; row <= rowCount; row++)
-            {
-                string? cellValue = Convert.ToString(workSheet.Cells[row, 1].Value);
+            if (string.IsNullOrWhiteSpace(name) || !existingNames.Add(name))
+                continue;
 
-                if (!string.IsNullOrEmpty(cellValue))
-                {
-                    string? countryName = cellValue;
-
-                    if (_db.Countries.Where(temp => temp.CountryName == countryName).Count() == 0)
-                    {
-                        Country country = new Country()
-                        {
-                            CountryName = countryName
-                        };
-                        
-                        _db.Countries.Add(country);
-
-                        await _db.SaveChangesAsync();
-
-                        countriesInserted++;
-                    }
-                }
-            }
+            newCountries.Add(new Country { CountryName = name });
         }
-        
-        return countriesInserted;
+
+        if (newCountries.Count == 0)
+            return 0;
+
+        _db.Countries.AddRange(newCountries);
+        await _db.SaveChangesAsync();
+
+        return newCountries.Count;
     }
 }
