@@ -1,6 +1,6 @@
 using ServiceContracts;
-using Xunit;
 using Entities;
+using EntityFrameworkCoreMock;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts.DTO.CountryDTO;
 using ServiceContracts.DTO.PersonDTO;
@@ -20,8 +20,19 @@ public class PersonsServiceTest
     //constructor
     public PersonsServiceTest(ITestOutputHelper testOutputHelper)
     {
-        _countriesService = new CountriesService(new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options));
-        _personsService = new PersonsService(new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options), _countriesService);
+        var countriesInitialData = new List<Country>() { };
+        var personsInitialData = new List<Person>() { };
+        
+        DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
+            new DbContextOptionsBuilder<ApplicationDbContext>().Options);
+            
+        ApplicationDbContext dbContext = dbContextMock.Object;
+
+        dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
+        dbContextMock.CreateDbSetMock(temp => temp.Persons, personsInitialData);
+        
+        _countriesService = new CountriesService(dbContext);
+        _personsService = new PersonsService(dbContext, _countriesService);
         _testOutputHelper = testOutputHelper;
     }
 
@@ -143,17 +154,43 @@ public class PersonsServiceTest
     [Fact]
     public async Task GetAllPersons_ReturnsExistingPersons()
     {
-        //Act
-        List<PersonResponse> persons_from_get =
-           await _personsService.GetAllPersons();
-
-        //Assert
-        Assert.NotEmpty(persons_from_get);
-
-        Assert.All(persons_from_get, person =>
+        // Arrange
+        CountryAddRequest countryRequest = new CountryAddRequest()
         {
-            Assert.NotEqual(Guid.Empty, person.PersonID);
-        });
+            CountryName = "Greece"
+        };
+
+        CountryResponse countryResponse =
+            await _countriesService.AddCountry(countryRequest);
+
+        PersonAddRequest personRequest = new PersonAddRequest()
+        {
+            PersonName = "John",
+            Email = "john@example.com",
+            Address = "Sample Address",
+            CountryID = countryResponse.CountryID,
+            DateOfBirth = DateTime.Parse("2000-01-01"),
+            Gender = GenderOptions.Male,
+            ReceiveNewsLetters = true
+        };
+
+        PersonResponse addedPerson =
+            await _personsService.AddPerson(personRequest);
+
+        // Act
+        List<PersonResponse> persons_from_get =
+            await _personsService.GetAllPersons();
+
+        // Assert
+        Assert.Single(persons_from_get);
+
+        Assert.Equal(
+            addedPerson.PersonID,
+            persons_from_get[0].PersonID);
+
+        Assert.Equal(
+            addedPerson.PersonName,
+            persons_from_get[0].PersonName);
     }
 
     //First, we will add few persons; and then when we call GetAllPersons(), it should return the same persons that were added
