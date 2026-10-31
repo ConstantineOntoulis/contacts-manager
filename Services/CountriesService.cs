@@ -10,12 +10,12 @@ namespace Services;
 public class CountriesService : ICountriesService
 {
     //private field so that several methods, and several calls to those methods, need access to the same list
-    private readonly PersonsDbContext _db;
+    private readonly ApplicationDbContext _db;
     
     //constructor
-    public CountriesService(PersonsDbContext personsDbContext)
+    public CountriesService(ApplicationDbContext applicationDbContext)
     {
-        _db = personsDbContext;
+        _db = applicationDbContext;
     }
     
     public async Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest)
