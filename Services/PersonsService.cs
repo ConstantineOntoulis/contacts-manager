@@ -14,13 +14,13 @@ namespace Services;
 public class PersonsService : IPersonsService
 {
     //Private field
-    private readonly PersonsDbContext _db;
+    private readonly ApplicationDbContext _db;
     private readonly ICountriesService _countriesService;
 
     //constructor
-    public PersonsService(PersonsDbContext personsDbContext, ICountriesService countriesService)
+    public PersonsService(ApplicationDbContext applicationDbContext, ICountriesService countriesService)
     {
-        _db = personsDbContext;
+        _db = applicationDbContext;
         _countriesService = countriesService;
     }
 
@@ -243,14 +243,16 @@ public class PersonsService : IPersonsService
             throw new ArgumentNullException(nameof(personID));
         }
 
-        bool personExists = await _db.Persons
-            .AnyAsync(temp => temp.PersonID == personID.Value);
+        Person? person = await _db.Persons
+            .FirstOrDefaultAsync(temp => temp.PersonID == personID.Value);
 
-        if (!personExists)
+        if (person == null)
             return false;
-        
-        _db.sp_DeletePerson(personID.Value);
-        
+
+        _db.Persons.Remove(person);
+
+        await _db.SaveChangesAsync();
+
         return true;
     }
 
