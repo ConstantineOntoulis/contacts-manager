@@ -7,6 +7,7 @@ using ServiceContracts.DTO.PersonDTO;
 using ServiceContracts.Enums;
 using Services;
 using Xunit.Abstractions;
+using AutoFixture;
 
 namespace Tests;
 
@@ -16,10 +17,13 @@ public class PersonsServiceTest
     private readonly IPersonsService _personsService;
     private readonly ICountriesService _countriesService;
     private readonly ITestOutputHelper _testOutputHelper;
+    private readonly IFixture _fixture;
 
     //constructor
     public PersonsServiceTest(ITestOutputHelper testOutputHelper)
     {
+        _fixture = new Fixture();
+        
         var countriesInitialData = new List<Country>() { };
         var personsInitialData = new List<Person>() { };
         
@@ -77,6 +81,14 @@ public class PersonsServiceTest
     public async Task AddPerson_ProperPersonDetails()
     {
         //Arrange
+        
+        //With AutoFixture
+        PersonAddRequest? personAddRequest = _fixture.Build<PersonAddRequest>()
+            .With(temp => temp.Email, "someone@example.com")
+            .Create();
+        
+        //Without AutoFixture
+        /*
         PersonAddRequest? personAddRequest = new PersonAddRequest()
         {
             PersonName = "Josh",
@@ -87,6 +99,7 @@ public class PersonsServiceTest
             DateOfBirth = DateTime.Parse("2000-01-01"),
             ReceiveNewsLetters = true
         };
+        */
 
         //Act
         PersonResponse personResponse = await _personsService.AddPerson(personAddRequest);
