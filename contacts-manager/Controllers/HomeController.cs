@@ -7,7 +7,7 @@ using ServiceContracts.DTO.CountryDTO;
 using ServiceContracts.DTO.PersonDTO;
 using ServiceContracts.Enums;
 
-namespace xUnit.Controllers;
+namespace contacts;
 
 [Route("persons")]
 public class HomeController : Controller

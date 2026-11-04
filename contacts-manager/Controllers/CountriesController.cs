@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace xUnit.Controllers;
+namespace contacts;
 
 [Route("countries")]
 public class CountriesController : Controller

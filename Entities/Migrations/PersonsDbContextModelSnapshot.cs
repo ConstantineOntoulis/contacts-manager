@@ -102,6 +102,8 @@ namespace Entities.Migrations
 
                     b.HasKey("PersonID");
 
+                    b.HasIndex("CountryID");
+
                     b.ToTable("Persons", null, t =>
                         {
                             t.HasCheckConstraint("CHK_TIN", "len([TaxIdentificationNumber]) = 8");
@@ -240,6 +242,20 @@ namespace Entities.Migrations
                             PersonName = "Verene",
                             ReceiveNewsLetters = true
                         });
+                });
+
+            modelBuilder.Entity("Entities.Person", b =>
+                {
+                    b.HasOne("Entities.Country", "Country")
+                        .WithMany("Persons")
+                        .HasForeignKey("CountryID");
+
+                    b.Navigation("Country");
+                });
+
+            modelBuilder.Entity("Entities.Country", b =>
+                {
+                    b.Navigation("Persons");
                 });
 #pragma warning restore 612, 618
         }
