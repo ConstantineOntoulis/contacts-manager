@@ -403,6 +403,7 @@ public class PersonsServiceTest
         }
 
         //Assert
+        /*
         foreach (PersonResponse added in responseList)
         {
             if (added.PersonName != null)
@@ -413,6 +414,8 @@ public class PersonsServiceTest
                 }
             }
         }
+        */
+        searchList.Should().OnlyContain(temp => temp.PersonName.Contains("na", StringComparison.CurrentCultureIgnoreCase));
     }
 
     #endregion
@@ -481,12 +484,18 @@ public class PersonsServiceTest
             _testOutputHelper.WriteLine(sort_List.ToString());
         }
 
+        /*
         responseList = responseList.OrderByDescending(temp => temp.PersonName).ToList();
 
+        //Assert
         for(int i = 0; i< responseList.Count; i++)
         {
             Assert.Equal(responseList, sortList);
         }
+        */
+        List<PersonResponse> expectedList = responseList.OrderByDescending(temp => temp.PersonName).ToList();
+
+        sortList.Should().BeEquivalentTo(expectedList, options => options.WithStrictOrdering());
     }
 
     #endregion
@@ -501,11 +510,19 @@ public class PersonsServiceTest
         PersonUpdateRequest? person_update_request = null;
 
         //Assert
+        /*
         await Assert.ThrowsAsync<ArgumentNullException>(async () =>
         {
             //Act
             await _personsService.UpdatePerson(person_update_request);
-        });
+        });*/
+
+        Func<Task> action = async () =>
+        {
+            await _personsService.UpdatePerson(person_update_request);
+        };
+        
+        await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
     //When we supply invalid person id, it should throw ArgumentException
@@ -517,11 +534,20 @@ public class PersonsServiceTest
             .Create();
 
         //Assert
+        /*
         await Assert.ThrowsAsync<ArgumentException>(async () =>
         {
             //Act
             await _personsService.UpdatePerson(person_update_request);
         });
+        */
+
+        Func<Task> action = async () =>
+        {
+            await _personsService.UpdatePerson(person_update_request);
+        };
+        
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     //When PersonName is null, it should throw ArgumentException
@@ -548,12 +574,13 @@ public class PersonsServiceTest
 
         person_update_request.PersonName = null;
 
-        //Assert
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        //Act
+        Func<Task> action = async () =>
         {
-            //Act
+            //Assert
             await _personsService.UpdatePerson(person_update_request);
-        });
+        };
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     //First, add a new person and try to update the person name and email
@@ -579,7 +606,10 @@ public class PersonsServiceTest
 
         PersonResponse? getByIdResponse = await _personsService.GetPersonByPersonID(updatedPerson.PersonID);
 
-        Assert.Equal(getByIdResponse, updatedPerson);
+        //Assert
+        //Assert.Equal(getByIdResponse, updatedPerson);
+        
+        updatedPerson.Should().BeEquivalentTo(getByIdResponse);
     }
 
     #endregion
@@ -594,7 +624,8 @@ public class PersonsServiceTest
         bool isDeleted = await _personsService.DeletePerson(Guid.NewGuid());
         
         //Assert
-        Assert.False(isDeleted);
+        //Assert.False(isDeleted);
+        isDeleted.Should().BeFalse();
     }
     
     //If you supply a valid PersonID, it should return true
@@ -616,7 +647,8 @@ public class PersonsServiceTest
         bool isDeleted = await _personsService.DeletePerson(person_response_from_add.PersonID);
         
         //Assert
-        Assert.True(isDeleted);
+        //Assert.True(isDeleted);
+        isDeleted.Should().BeTrue();
     }
     
     #endregion
