@@ -26,7 +26,7 @@ public interface IPersonsRepository
     /// </summary>
     /// <param name="personID"></param>
     /// <returns>Matching person or null</returns>
-    Task<List<Person>> GetPersonByPersonID(Guid personID);
+    Task<Person?> GetPersonByPersonID(Guid personID);
 
     /// <summary>
     /// Returns all person objects based on the given expression
