@@ -26,14 +26,14 @@ public interface IPersonsRepository
     /// </summary>
     /// <param name="personID"></param>
     /// <returns>Matching person or null</returns>
-    Task<Person?> GetPersonByPersonID(Guid personID);
+    Task<Person?> GetPersonByPersonID(Guid? personID);
 
     /// <summary>
     /// Returns all person objects based on the given expression
     /// </summary>
     /// <param name="predicate">LINQ expression to check</param>
     /// <returns>All matching persons with given condition</returns>
-    Task<List<Person>> GetFilteredPersons(Expression<Func<Person, bool>>? predicate);
+    Task<List<Person>> GetFilteredPersons(Expression<Func<Person, bool>> predicate);
     
     /// <summary>
     /// Deletes a person object based on the person id

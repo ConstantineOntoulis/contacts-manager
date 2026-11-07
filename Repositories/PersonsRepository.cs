@@ -35,14 +35,14 @@ public class PersonsRepository : IPersonsRepository
         return await _dbContext.Persons.Include("Country").ToListAsync();
     }
 
-    public async Task<List<Person>> GetFilteredPersons(Expression<Func<Person, bool>>? predicate)
+    public async Task<List<Person>> GetFilteredPersons(Expression<Func<Person, bool>> predicate)
     {
         return await _dbContext.Persons.Include("Country")
             .Where(predicate)
             .ToListAsync();
     }
     
-    public async Task<Person?> GetPersonByPersonID(Guid personID)
+    public async Task<Person?> GetPersonByPersonID(Guid? personID)
     {
         return await _dbContext.Persons.Include("Country")
             .FirstOrDefaultAsync(temp => temp.PersonID == personID);
