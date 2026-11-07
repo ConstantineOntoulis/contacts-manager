@@ -25,7 +25,7 @@ public interface ICountriesRepository
     /// </summary>
     /// <param name="countryID">CountryID to search</param>
     /// <returns>Matching country or null</returns>
-    Task<Country?> GetCountryByCountryID(Guid countryID);
+    Task<Country?> GetCountryByCountryID(Guid? countryID);
     
     /// <summary>
     /// Returns a country object based on the given country name

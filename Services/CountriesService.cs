@@ -4,18 +4,19 @@ using ServiceContracts;
 using ServiceContracts.DTO.CountryDTO;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using RepositoryContracts;
 
 namespace Services;
 
 public class CountriesService : ICountriesService
 {
     //private field so that several methods, and several calls to those methods, need access to the same list
-    private readonly ApplicationDbContext _db;
+    private readonly ICountriesRepository _countriesRepository;
     
     //constructor
-    public CountriesService(ApplicationDbContext applicationDbContext)
+    public CountriesService(ICountriesRepository countriesRepository)
     {
-        _db = applicationDbContext;
+        _countriesRepository = countriesRepository;
     }
     
     public async Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest)
@@ -33,7 +34,7 @@ public class CountriesService : ICountriesService
         }
         
         //Validation: CountryName can't be duplicate
-        if (await _db.Countries.CountAsync(temp => temp.CountryName == countryAddRequest.CountryName) > 0)
+        if (await _countriesRepository.GetCountryByCountryName(countryAddRequest.CountryName) != null)
         {
             throw new ArgumentException("Given country name already exists");
         }
@@ -45,16 +46,18 @@ public class CountriesService : ICountriesService
         country.CountryID = Guid.NewGuid();
         
         //Add country object into _countries
-        _db.Countries.Add(country);
-        await _db.SaveChangesAsync();
+        await _countriesRepository.AddCountry(country);
 
         return country.ToCountryResponse();
     }
 
     public async Task<List<CountryResponse>> GetAllCountries()
     {
-        return await _db.Countries
-            .Select(country => country.ToCountryResponse()).ToListAsync();
+        List<Country> countries = await _countriesRepository.GetAllCountries();
+
+        return countries
+            .Select(country => country.ToCountryResponse())
+            .ToList();
     }
 
     public async Task<CountryResponse?> GetCountryByCountryID(Guid? countryID)
@@ -62,8 +65,7 @@ public class CountriesService : ICountriesService
         if (countryID == null)
             return null;
 
-        Country? country_response_from_list = await _db.Countries
-            .FirstOrDefaultAsync(temp => temp.CountryID == countryID);
+        Country? country_response_from_list = await _countriesRepository.GetCountryByCountryID(countryID.Value);
 
         if (country_response_from_list == null)
             return null;
@@ -82,9 +84,10 @@ public class CountriesService : ICountriesService
         var worksheet = package.Workbook.Worksheets["Countries"]
                         ?? throw new InvalidDataException("Countries worksheet not found.");
 
-        var existingNames = (await _db.Countries
-                .Select(c => c.CountryName)
-                .ToListAsync())
+        List<Country> countries = await _countriesRepository.GetAllCountries();
+        
+        var existingNames = countries
+            .Select(country => country.CountryName)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         var newCountries = new List<Country>();
@@ -103,8 +106,9 @@ public class CountriesService : ICountriesService
         if (newCountries.Count == 0)
             return 0;
 
-        _db.Countries.AddRange(newCountries);
-        await _db.SaveChangesAsync();
+        await Task.WhenAll(
+            newCountries.Select(country => _countriesRepository.AddCountry(country))
+        );
 
         return newCountries.Count;
     }
