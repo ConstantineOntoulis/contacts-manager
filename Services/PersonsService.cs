@@ -215,9 +215,7 @@ public class PersonsService : IPersonsService
         ValidationHelper.ModelValidation(personUpdateRequest);
 
         //get matching person object to update
-        Person? matchingPerson = await _personsRepository.Persons
-            .AsNoTracking()
-            .FirstOrDefaultAsync(temp => temp.PersonID == personUpdateRequest.PersonID);
+        Person? matchingPerson = await _personsRepository.GetPersonByPersonID(personUpdateRequest.PersonID);
 
         if (matchingPerson == null)
         {
@@ -234,7 +232,7 @@ public class PersonsService : IPersonsService
         matchingPerson.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
 
         //_db.sp_UpdatePerson(matchingPerson); //UPDATE
-        await _personsRepository.SaveChangesAsync();
+        await _personsRepository.UpdatePerson(matchingPerson);
 
         return matchingPerson.ToPersonResponse();
     }
@@ -246,15 +244,12 @@ public class PersonsService : IPersonsService
             throw new ArgumentNullException(nameof(personID));
         }
 
-        Person? person = await _personsRepository.Persons
-            .FirstOrDefaultAsync(temp => temp.PersonID == personID.Value);
+        Person? person = await _personsRepository.GetPersonByPersonID(personID.Value);
 
         if (person == null)
             return false;
 
-        _personsRepository.Persons.Remove(person);
-
-        await _personsRepository.SaveChangesAsync();
+        await _personsRepository.DeletePersonByPersonID(personID.Value);
 
         return true;
     }
@@ -283,9 +278,7 @@ public class PersonsService : IPersonsService
 
         csvWriter.NextRecord();
 
-        List<PersonResponse> persons = _personsRepository.Persons
-            .Include("Country")
-            .Select(temp => temp.ToPersonResponse()).ToList();
+        List<PersonResponse> persons = await GetAllPersons();
 
         foreach (PersonResponse person in persons)
         {
@@ -341,10 +334,7 @@ public class PersonsService : IPersonsService
 
             int row = 2;
 
-            List<PersonResponse> persons = _personsRepository.Persons
-                .Include("Country")
-                .Select(temp => temp.ToPersonResponse())
-                .ToList();
+            List<PersonResponse> persons = await GetAllPersons();       
 
             foreach (PersonResponse person in persons)
             {
