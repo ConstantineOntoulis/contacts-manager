@@ -221,19 +221,4 @@ public class HomeController : Controller
 
         return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "persons.xlsx");
     }
-    
-    [HttpGet("initials")]
-    public IActionResult GetContactInitials(string firstName, string lastName)
-    {
-        if (string.IsNullOrWhiteSpace(firstName) ||
-            string.IsNullOrWhiteSpace(lastName))
-        {
-            return BadRequest("First name and last name are required.");
-        }
-
-        string initials = $"{char.ToUpperInvariant(firstName.Trim()[0])}" +
-                          $"{char.ToUpperInvariant(lastName.Trim()[0])}";
-
-        return Ok(new { Initials = initials });
-    }
 }
