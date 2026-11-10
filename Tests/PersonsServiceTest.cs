@@ -9,6 +9,8 @@ using Services;
 using Xunit.Abstractions;
 using AutoFixture;
 using FluentAssertions;
+using Moq;
+using RepositoryContracts;
 
 namespace Tests;
 
@@ -17,6 +19,10 @@ public class PersonsServiceTest
     //private fields
     private readonly IPersonsService _personsService;
     private readonly ICountriesService _countriesService;
+    
+    private readonly Mock<IPersonsRepository> _personsRepositoryMock;
+    private readonly IPersonsRepository _personsRepository; 
+    
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly IFixture _fixture;
 
@@ -24,6 +30,8 @@ public class PersonsServiceTest
     public PersonsServiceTest(ITestOutputHelper testOutputHelper)
     {
         _fixture = new Fixture();
+        _personsRepositoryMock = new Mock<IPersonsRepository>();
+        _personsRepository = _personsRepositoryMock.Object;
         
         var countriesInitialData = new List<Country>() { };
         var personsInitialData = new List<Person>() { };
@@ -36,8 +44,8 @@ public class PersonsServiceTest
         dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
         dbContextMock.CreateDbSetMock(temp => temp.Persons, personsInitialData);
         
-        _countriesService = new CountriesService(dbContext);
-        _personsService = new PersonsService(dbContext, _countriesService);
+        _countriesService = new CountriesService(null);
+        _personsService = new PersonsService(_personsRepository);
         _testOutputHelper = testOutputHelper;
     }
 
@@ -45,7 +53,7 @@ public class PersonsServiceTest
 
     //When we supply null value as PersonAddRequest, it should throw ArgumentNullException
     [Fact]
-    public async Task AddPerson_NullPerson()
+    public async Task AddPerson_NullPerson_ToBeArgumentNullException()
     {
         //Arrange
         PersonAddRequest? personAddRequest = null;
@@ -70,13 +78,19 @@ public class PersonsServiceTest
 
     //When we supply null value as PersonName, it should throw ArgumentNullException
     [Fact]
-    public async Task AddPerson_PersonNameIsNull()
+    public async Task AddPerson_PersonNameIsNull_ToBeArgumentException()
     {
         //Arrange
         PersonAddRequest? personAddRequest = _fixture.Build<PersonAddRequest>()
             .With(temp => temp.PersonName, null as string)
             .Create();
 
+        Person person = personAddRequest.ToPerson();
+        
+        //When PersonsRepository.AddPerson is called, it has to return the same "person" object
+        _personsRepositoryMock.Setup(temp => temp.AddPerson(It.IsAny<Person>()))
+            .ReturnsAsync(person);
+        
         //Assert
         Func<Task> action = async () =>
         {
@@ -89,8 +103,9 @@ public class PersonsServiceTest
 
     //when we supply proper person details, it should insert the person into the persons' list; and
     //it should return an object of PersonResponse, which includes with the newly generated person id
+    
     [Fact]
-    public async Task AddPerson_ProperPersonDetails()
+    public async Task AddPerson_FullPersonDetails_ToBeSuccessful()
     {
         //Arrange
         
@@ -98,6 +113,13 @@ public class PersonsServiceTest
         PersonAddRequest? personAddRequest = _fixture.Build<PersonAddRequest>()
             .With(temp => temp.Email, "someone@example.com")
             .Create();
+
+        Person person = personAddRequest.ToPerson();
+        PersonResponse person_response_expected = person.ToPersonResponse();
+        
+        //If we supply any argument value to the AddPerson method, it should return the same value
+        _personsRepositoryMock.Setup(temp => temp.AddPerson(It.IsAny<Person>()))
+            .ReturnsAsync(person);
         
         //Without AutoFixture
         /*
@@ -114,16 +136,19 @@ public class PersonsServiceTest
         */
 
         //Act
-        PersonResponse personResponse = await _personsService.AddPerson(personAddRequest);
-
-        List<PersonResponse> persons_from_GetAllPersons = await _personsService.GetAllPersons();
-
+        //PersonResponse personResponse = await _personsService.AddPerson(personAddRequest);
+        PersonResponse person_response_from_add = await _personsService.AddPerson(personAddRequest);
+        person_response_expected.PersonID = person_response_from_add.PersonID;
+        //List<PersonResponse> persons_from_GetAllPersons = await _personsService.GetAllPersons();
+        
+        
         //Assert
         //Assert.True(personResponse.PersonID != Guid.Empty);
-        personResponse.PersonID.Should().NotBe(Guid.Empty);
-        
+        //personResponse.PersonID.Should().NotBe(Guid.Empty);
+        person_response_from_add.PersonID.Should().NotBe(Guid.Empty);
+        person_response_from_add.Should().Be(person_response_expected);
         //Assert.Contains(personResponse, persons_from_GetAllPersons);
-        persons_from_GetAllPersons.Should().Contain(personResponse);
+        //persons_from_GetAllPersons.Should().Contain(personResponse);
     }
 
     #endregion
@@ -132,7 +157,7 @@ public class PersonsServiceTest
 
     //If we supply null as PersonID, it should return null as PersonResponse
     [Fact]
-    public async Task GetPersonByPersonID_NullPersonID()
+    public async Task GetPersonByPersonID_NullPersonID_ToBeNull()
     {
         //Arrange
         Guid? personID = null;
@@ -147,25 +172,30 @@ public class PersonsServiceTest
 
     //If we supply a valid person id, it should return the valid person details as PersonResponse Object
     [Fact]
-    public async Task GetPersonByPersonID_WithPersonID()
+    public async Task GetPersonByPersonID_WithPersonID_ToBeSuccessful()
     {
         //Arrange
-        CountryAddRequest country_request = _fixture.Create<CountryAddRequest>();
+        //CountryAddRequest country_request = _fixture.Create<CountryAddRequest>();
 
-        CountryResponse country_response = await _countriesService.AddCountry(country_request);
+        //CountryResponse country_response = await _countriesService.AddCountry(country_request);
 
-        PersonAddRequest person_request = _fixture.Build<PersonAddRequest>()
+        Person person = _fixture.Build<Person>()
             .With(temp => temp.Email, "email@sample.com")
             .Create();
 
-        PersonResponse person_response_from_add = await _personsService.AddPerson(person_request);
+        PersonResponse person_reponse_expected = person.ToPersonResponse();
+        
+        //PersonResponse person_response_from_add = await _personsService.AddPerson(person);
 
-        PersonResponse? person_response_from_get = await _personsService.GetPersonByPersonID(person_response_from_add.PersonID);
+        //Mocking the GetPersonByPersonID
+        _personsRepositoryMock.Setup(temp => temp.GetPersonByPersonID(It.IsAny<Guid>()))
+            .ReturnsAsync(person);
+        //Act
+        PersonResponse? person_response_from_get = await _personsService.GetPersonByPersonID(person.PersonID);
 
-        //Assert
         //Assert.Equal(person_response_from_add, person_response_from_get);
         
-        person_response_from_get.Should().Be(person_response_from_add);
+        person_response_from_get.Should().Be(person_reponse_expected);
     }
 
     #endregion
@@ -173,6 +203,22 @@ public class PersonsServiceTest
     #region GetAllPersons
     
     //The GetAllPersons() should return an empty list by default
+
+    [Fact]
+    public async Task GetAllPersons_ToBeEmptyList()
+    {
+        //Arrange
+        var persons = new List<Person>();
+        _personsRepositoryMock.Setup(temp => temp.GetAllPersons())
+            .ReturnsAsync(persons);
+        
+        //Act
+        List<PersonResponse> persons_from_get = await _personsService.GetAllPersons();
+        
+        //Assert
+        persons_from_get.Should().BeEmpty();
+    }
+    
     [Fact]
     public async Task GetAllPersons_ReturnsExistingPersons()
     {
@@ -207,58 +253,53 @@ public class PersonsServiceTest
 
     //First, we will add few persons; and then when we call GetAllPersons(), it should return the same persons that were added
     [Fact]
-    public async Task GetPeopleList_AddFewPeople()
+    public async Task GetPeopleList_WithFewPersons_ToBeSuccessful()
     {
-        CountryAddRequest countryRequest1 = _fixture.Create<CountryAddRequest>();
-        CountryAddRequest countryRequest2 = _fixture.Create<CountryAddRequest>();
+        //CountryAddRequest countryRequest1 = _fixture.Create<CountryAddRequest>();
+        //CountryAddRequest countryRequest2 = _fixture.Create<CountryAddRequest>();
 
 
-        CountryResponse countryResponse1 = await _countriesService.AddCountry(countryRequest1);
-        CountryResponse countryResponse2 = await _countriesService.AddCountry(countryRequest2);
+        //CountryResponse countryResponse1 = await _countriesService.AddCountry(countryRequest1);
+        //CountryResponse countryResponse2 = await _countriesService.AddCountry(countryRequest2);
 
-        PersonAddRequest personRequest1 = _fixture.Build<PersonAddRequest>()
-            .With(temp => temp.Email, "someone1@example.com")
-            .Create();
-
-        PersonAddRequest personRequest2 = _fixture.Build<PersonAddRequest>()
-            .With(temp => temp.Email, "someone2@example.com")
-            .Create();
-
-        PersonAddRequest personRequest3 = _fixture.Build<PersonAddRequest>()
-            .With(temp => temp.Email, "someone3@example.com")
-            .Create();
-        
-        List<PersonAddRequest> peopleRequests = new List<PersonAddRequest>()
+        List<Person> persons = new List<Person>()
         {
-            personRequest1,
-            personRequest2,
-            personRequest3
+            _fixture.Build<Person>()
+                .With(temp => temp.Email, "someone1@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create(),
+
+            _fixture.Build<Person>()
+                .With(temp => temp.Email, "someone2@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create(),
+
+            _fixture.Build<Person>()
+                .With(temp => temp.Email, "someone3@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create()
         };
 
-        List<PersonResponse> responseList = new List<PersonResponse>();
-
-
-        foreach (PersonAddRequest personRequest in peopleRequests)
-        {
-            PersonResponse fullPeopleResponse = await _personsService.AddPerson(personRequest);
-            responseList.Add(fullPeopleResponse);
-        }
+        List<PersonResponse> person_response_list_expected = persons.Select(temp => temp.ToPersonResponse()).ToList();
 
         //print person_response_list_from_add
         _testOutputHelper.WriteLine("Expected: ");
-        foreach (PersonResponse person_response in responseList)
+        foreach (PersonResponse person_response_from_add in person_response_list_expected)
         {
-            _testOutputHelper.WriteLine(person_response.ToString());
+            _testOutputHelper.WriteLine(person_response_from_add.ToString());
         }
 
+        _personsRepositoryMock.Setup(temp => temp.GetAllPersons())
+            .ReturnsAsync(persons);
+        
         //Act
-        List<PersonResponse> updatedList = await _personsService.GetAllPersons();
+        List<PersonResponse> persons_list_from_get = await _personsService.GetAllPersons();
 
         //print person_response_list_from_add
         _testOutputHelper.WriteLine("Expected: ");
-        foreach (PersonResponse person_update in updatedList)
+        foreach (PersonResponse person_response_from_get in persons_list_from_get)
         {
-            _testOutputHelper.WriteLine(person_update.ToString());
+            _testOutputHelper.WriteLine(person_response_from_get.ToString());
         }
 
         //Assert
@@ -267,7 +308,7 @@ public class PersonsServiceTest
             Assert.Contains(added, updatedList);
         }
         */
-        updatedList.Should().BeEquivalentTo(responseList);
+        persons_list_from_get.Should().BeEquivalentTo(person_response_list_expected);
     }
 
     #endregion
@@ -280,7 +321,6 @@ public class PersonsServiceTest
     {
         CountryAddRequest countryRequest1 = _fixture.Create<CountryAddRequest>();
         CountryAddRequest countryRequest2 = _fixture.Create<CountryAddRequest>();
-
 
         CountryResponse countryResponse1 = await _countriesService.AddCountry(countryRequest1);
         CountryResponse countryResponse2 = await _countriesService.AddCountry(countryRequest2);
