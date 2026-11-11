@@ -183,7 +183,7 @@ public class PersonsServiceTest
             .With(temp => temp.Email, "email@sample.com")
             .Create();
 
-        PersonResponse person_reponse_expected = person.ToPersonResponse();
+        PersonResponse? person_reponse_expected = person.ToPersonResponse();
         
         //PersonResponse person_response_from_add = await _personsService.AddPerson(person);
 
@@ -209,6 +209,7 @@ public class PersonsServiceTest
     {
         //Arrange
         var persons = new List<Person>();
+        
         _personsRepositoryMock.Setup(temp => temp.GetAllPersons())
             .ReturnsAsync(persons);
         
@@ -296,7 +297,7 @@ public class PersonsServiceTest
         List<PersonResponse> persons_list_from_get = await _personsService.GetAllPersons();
 
         //print person_response_list_from_add
-        _testOutputHelper.WriteLine("Expected: ");
+        _testOutputHelper.WriteLine("Actual: ");
         foreach (PersonResponse person_response_from_get in persons_list_from_get)
         {
             _testOutputHelper.WriteLine(person_response_from_get.ToString());
