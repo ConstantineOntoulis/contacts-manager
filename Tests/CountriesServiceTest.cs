@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using EntityFrameworkCoreMock;
 using Moq;
 using AutoFixture;
+using RepositoryContracts;
+using Xunit.Abstractions;
 
 namespace Tests;
 
@@ -14,10 +16,18 @@ public class CountriesServiceTest
 {
     private readonly ICountriesService _countriesService;
     private readonly IFixture _fixture;
+    
+    private readonly Mock<ICountriesRepository> _countriesRepositoryMock;
+    private readonly ICountriesRepository _countriesRepository;
+
+    private readonly ITestOutputHelper _testOutputHelper;
 
     public CountriesServiceTest()
     {
         _fixture = new Fixture();
+        
+        _countriesRepositoryMock = new Mock<ICountriesRepository>();
+        _countriesRepository = _countriesRepositoryMock.Object;
         
         var countriesInitialData = new List<Country>() { };
         
