@@ -628,19 +628,24 @@ public class PersonsServiceTest
 
     //If you supply a valid PersonID, it should return true
     [Fact]
-    public async Task DeletePerson_ValidPersonID()
+    public async Task DeletePerson_ValidPersonID_ToBeSuccessful()
     {
         //Arrange
-        CountryAddRequest country_add_request = _fixture.Create<CountryAddRequest>();
-
-        CountryResponse country_response_from_add = await _countriesService.AddCountry(country_add_request);
-
-        PersonAddRequest personAddRequest = _fixture.Build<PersonAddRequest>()
+        Person person = _fixture.Build<Person>()
             .With(temp => temp.Email, "example@email.com")
+            .With(temp => temp.PersonName, "Nasos")
+            .With(temp => temp.Country, null as Country)
+            .With(temp => temp.PersonName, "Male")
             .Create();
 
-        PersonResponse person_response_from_add = await _personsService.AddPerson(personAddRequest);
+        PersonResponse person_response_from_add = person.ToPersonResponse();
 
+        _personsRepositoryMock.Setup(temp => temp.DeletePersonByPersonID(It.IsAny<Guid>()))
+            .ReturnsAsync(true);
+
+        _personsRepositoryMock.Setup(temp => temp.GetPersonByPersonID(It.IsAny<Guid>()))
+            .ReturnsAsync(person);
+        
         //Act
         bool isDeleted = await _personsService.DeletePerson(person_response_from_add.PersonID);
 
