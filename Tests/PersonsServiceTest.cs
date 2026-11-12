@@ -19,7 +19,7 @@ public class PersonsServiceTest
 {
     //private fields
     private readonly IPersonsService _personsService;
-    private readonly ICountriesService _countriesService;
+    //private readonly ICountriesService _countriesService;
 
     private readonly Mock<IPersonsRepository> _personsRepositoryMock;
     private readonly IPersonsRepository _personsRepository;
@@ -34,18 +34,18 @@ public class PersonsServiceTest
         _personsRepositoryMock = new Mock<IPersonsRepository>();
         _personsRepository = _personsRepositoryMock.Object;
 
-        var countriesInitialData = new List<Country>() { };
-        var personsInitialData = new List<Person>() { };
+        //var countriesInitialData = new List<Country>() { };
+        //var personsInitialData = new List<Person>() { };
 
-        DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
-            new DbContextOptionsBuilder<ApplicationDbContext>().Options);
+        //DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
+        //new DbContextOptionsBuilder<ApplicationDbContext>().Options);
 
-        ApplicationDbContext dbContext = dbContextMock.Object;
+        //ApplicationDbContext dbContext = dbContextMock.Object;
 
-        dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
-        dbContextMock.CreateDbSetMock(temp => temp.Persons, personsInitialData);
+        //dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
+        //dbContextMock.CreateDbSetMock(temp => temp.Persons, personsInitialData);
 
-        _countriesService = new CountriesService(null);
+        //_countriesService = new CountriesService(null);
         _personsService = new PersonsService(_personsRepository);
         _testOutputHelper = testOutputHelper;
     }
