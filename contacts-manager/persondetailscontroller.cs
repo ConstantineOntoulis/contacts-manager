@@ -1,12 +1,10 @@
-using System.Diagnostics;
 using AutoFixture;
 using Moq;
 using ServiceContracts.DTO.CountryDTO;
 using ServiceContracts.DTO.PersonDTO;
 using Xunit;
-using ContactsManager.Controllers;
+using contacts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using ServiceContracts.Enums;
 using FluentAssertions;
 using ServiceContracts;
@@ -15,11 +13,11 @@ namespace ContactsManager;
 
 public class PeopleControllerTest
 {
-    private readonly IPersonService _personService;
+    private readonly IPersonsService _personService;
     private readonly ICountriesService _countriesService;
 
     private readonly Mock<ICountriesService> _mockCountriesService;
-    private readonly Mock<IPersonService> _mockPersonService;
+    private readonly Mock<IPersonsService> _mockPersonService;
 
     private readonly Fixture _fixture;
 
@@ -27,7 +25,7 @@ public class PeopleControllerTest
     {
         _fixture = new Fixture();
         _mockCountriesService = new Mock<ICountriesService>();
-        _mockPersonService = new Mock<IPersonService>();
+        _mockPersonService = new Mock<IPersonsService>();
         _countriesService = _mockCountriesService.Object;
         _personService = _mockPersonService.Object;
     }
@@ -40,11 +38,11 @@ public class PeopleControllerTest
         //Arrange
         List<PersonResponse> responseList = _fixture.Create<List<PersonResponse>>();
 
-        PersonDetailsController personDetailsController =
-            new PersonDetailsController(_personService, _countriesService);
+        HomeController personDetailsController =
+            new HomeController(_personService, _countriesService);
 
         _mockPersonService
-            .Setup(temp => temp.GetFilteredPeople(It.IsAny<string>(), It.IsAny<string>()))
+            .Setup(temp => temp.GetFilteredPersons(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(responseList);
 
         _mockPersonService
@@ -77,8 +75,8 @@ public class PeopleControllerTest
         PersonResponse personResponse = _fixture.Create<PersonResponse>();
         List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
 
-        PersonDetailsController personDetailsController =
-            new PersonDetailsController(_personService, _countriesService);
+        HomeController personDetailsController =
+            new HomeController(_personService, _countriesService);
 
         _mockCountriesService
             .Setup(temp => temp.GetAllCountries())
@@ -88,7 +86,7 @@ public class PeopleControllerTest
             .Setup(temp => temp.AddPerson(It.IsAny<PersonAddRequest>()))
             .ReturnsAsync(personResponse);
 
-        PersonDetailsController personController = new PersonDetailsController(_personService, _countriesService);
+        HomeController personController = new HomeController(_personService, _countriesService);
 
         //Act
         //create fake model errors
