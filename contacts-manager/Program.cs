@@ -26,6 +26,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ContactsDb;Integrated Security=True;Encrypt=False
+// Linux Connection String:
+// Server=127.0.0.1,1433;Database=ContactsManagerDb;User Id=sa;Password=ChooseAReallyStrongPassword123!;Encrypt=True;TrustServerCertificate=True;
 
 var app = builder.Build();
 
