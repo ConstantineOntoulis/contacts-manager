@@ -181,7 +181,7 @@ public class HomeController : Controller
             return RedirectToAction("Index");
         }
 
-        _personsService.DeletePerson(personUpdateRequest.PersonID);
+        await _personsService.DeletePerson(personUpdateRequest.PersonID);
         
         return RedirectToAction("Index");
     }
