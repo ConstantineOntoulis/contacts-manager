@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using EntityFrameworkCoreMock;
 using Moq;
 using AutoFixture;
+using FluentAssertions;
 using RepositoryContracts;
 using Xunit.Abstractions;
+
 
 namespace Tests;
 
@@ -22,51 +24,61 @@ public class CountriesServiceTest
 
     private readonly ITestOutputHelper _testOutputHelper;
 
-    public CountriesServiceTest()
+    public CountriesServiceTest(ITestOutputHelper testOutputHelper)
     {
         _fixture = new Fixture();
         
         _countriesRepositoryMock = new Mock<ICountriesRepository>();
         _countriesRepository = _countriesRepositoryMock.Object;
         
-        var countriesInitialData = new List<Country>() { };
+        //var countriesInitialData = new List<Country>() { };
         
-        DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
-            new DbContextOptionsBuilder<ApplicationDbContext>().Options);
+        //DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
+            //new DbContextOptionsBuilder<ApplicationDbContext>().Options);
             
-        ApplicationDbContext dbContext = dbContextMock.Object;
+        //ApplicationDbContext dbContext = dbContextMock.Object;
 
-        dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
+        //dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
         
-        _countriesService = new CountriesService(null);
+        _countriesService = new CountriesService(_countriesRepository);
+        _testOutputHelper = testOutputHelper;
     }
 
     #region AddCountry
     
     //When CountryAddRequest is null, it should ArgumentNullException
     [Fact]
-    public async Task AddCountry_NullCountry()
+    public async Task AddCountry_NullCountry_ToBeArgumentNullException()
     {
         //Arrange
         CountryAddRequest? request = null;
 
         //Assert
+        /*
         await Assert.ThrowsAsync<ArgumentNullException>(async () =>
         {
             //Act
             await _countriesService.AddCountry(request);
         });
+        */
+        Func<Task> action = async () =>
+        {
+            //Act
+            await _countriesService.AddCountry(request);
+        };
+
+        await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
     //When the CountryName is null, it should throw ArgumentException
     [Fact]
-    public async Task AddCountry_CountryNameIsNull()
+    public async Task AddCountry_CountryNameIsNull_ToBeArgumentException()
     {
         //Arrange
         CountryAddRequest? request = _fixture.Build<CountryAddRequest>()
             .With(temp => temp.CountryName, null as string)
             .Create();
-
+        
         //Assert
         await Assert.ThrowsAsync<ArgumentException>(async () =>
         {
