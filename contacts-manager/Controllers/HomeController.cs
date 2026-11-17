@@ -64,10 +64,10 @@ public class HomeController : Controller
             Value = temp.CountryID.ToString()
         });
         /*{
-            Text = "Tino",
-            Value = "1"
+            Text = "Greece",
+            Value = "123"
         };*/
-        //this is like writing <option value="1">Tino</option>
+        //this is like writing <option value="123">Greece</option>
         
         return View();
     }
