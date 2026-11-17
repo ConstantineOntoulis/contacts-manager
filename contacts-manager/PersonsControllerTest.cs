@@ -63,10 +63,11 @@ public class PeopleControllerTest
         viewResult.ViewData.Model.Should().BeAssignableTo<IEnumerable<PersonResponse>>();
         viewResult.ViewData.Model.Should().Be(responseList);
     }
-
+    
     #endregion
 
-
+    #region Create
+    
     [Fact]
     public async void Create_IfModelErrors_ToReturnCreateView()
     {
@@ -94,10 +95,46 @@ public class PeopleControllerTest
 
         //personRequest needs to be supplied as an argument to this method
         IActionResult result = await personDetailsController.Create(personRequest);
+        
+        
         //Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
 
         viewResult.ViewData.Model.Should().BeAssignableTo<IEnumerable<PersonResponse>>();
         viewResult.ViewData.Model.Should().Be(personRequest);
     }
+    
+    [Fact]
+    public async void Create_IfNoModelErrors_ToReturnToIndexView()
+    {
+        //Arrange
+        PersonAddRequest personRequest = _fixture.Create<PersonAddRequest>();
+        PersonResponse personResponse = _fixture.Create<PersonResponse>();
+        List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
+
+        HomeController personDetailsController =
+            new HomeController(_personService, _countriesService);
+
+        _mockCountriesService
+            .Setup(temp => temp.GetAllCountries())
+            .ReturnsAsync(countries);
+
+        _mockPersonService
+            .Setup(temp => temp.AddPerson(It.IsAny<PersonAddRequest>()))
+            .ReturnsAsync(personResponse);
+
+        HomeController personController = new HomeController(_personService, _countriesService);
+
+        //Act
+        //personRequest needs to be supplied as an argument to this method
+        IActionResult result = await personDetailsController.Create(personRequest);
+        
+        //Assert
+        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        
+        redirectResult.ActionName.Should().Be("Index");
+    }
+    
+    #endregion
+    
 }
