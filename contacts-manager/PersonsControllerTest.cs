@@ -137,4 +137,24 @@ public class PeopleControllerTest
     
     #endregion
     
+    [Fact]
+    public async Task Create_IfModelStateIsInvalid_ShouldNotAddPerson()
+    {
+        // Arrange
+        PersonAddRequest personRequest = _fixture.Create<PersonAddRequest>();
+
+        HomeController controller =
+            new HomeController(_personService, _countriesService);
+
+        controller.ModelState.AddModelError(
+            "PersonName", "Person Name cannot be empty");
+
+        // Act
+        await controller.Create(personRequest);
+
+        // Assert
+        _mockPersonService.Verify(
+            temp => temp.AddPerson(It.IsAny<PersonAddRequest>()),
+            Times.Never);
+    }
 }
