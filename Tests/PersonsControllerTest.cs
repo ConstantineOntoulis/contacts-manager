@@ -9,7 +9,7 @@ using ServiceContracts.Enums;
 using FluentAssertions;
 using ServiceContracts;
 
-namespace ContactsManager;
+namespace Tests;
 
 public class PeopleControllerTest
 {
