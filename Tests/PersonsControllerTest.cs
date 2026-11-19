@@ -69,7 +69,7 @@ public class PeopleControllerTest
     #region Create
     
     [Fact]
-    public async void Create_IfModelErrors_ToReturnCreateView()
+    public async Task Create_IfModelErrors_ToReturnCreateView()
     {
         //Arrange
         PersonAddRequest personRequest = _fixture.Create<PersonAddRequest>();
@@ -86,12 +86,11 @@ public class PeopleControllerTest
         _mockPersonService
             .Setup(temp => temp.AddPerson(It.IsAny<PersonAddRequest>()))
             .ReturnsAsync(personResponse);
-
-        HomeController personController = new HomeController(_personService, _countriesService);
-
+        
         //Act
         //create fake model errors
-        personController.ModelState.AddModelError("PersonName", "Person Name cannot be empty");
+        personDetailsController.ModelState.AddModelError(
+            "PersonName", "Person Name cannot be empty");
 
         //personRequest needs to be supplied as an argument to this method
         IActionResult result = await personDetailsController.Create(personRequest);
@@ -100,12 +99,12 @@ public class PeopleControllerTest
         //Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
 
-        viewResult.ViewData.Model.Should().BeAssignableTo<IEnumerable<PersonResponse>>();
+        viewResult.ViewData.Model.Should().BeOfType<PersonAddRequest>();
         viewResult.ViewData.Model.Should().Be(personRequest);
     }
     
     [Fact]
-    public async void Create_IfNoModelErrors_ToReturnToIndexView()
+    public async Task Create_IfNoModelErrors_ToReturnToIndexView()
     {
         //Arrange
         PersonAddRequest personRequest = _fixture.Create<PersonAddRequest>();
@@ -143,6 +142,12 @@ public class PeopleControllerTest
         // Arrange
         PersonAddRequest personRequest = _fixture.Create<PersonAddRequest>();
 
+        List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
+
+        _mockCountriesService
+            .Setup(temp => temp.GetAllCountries())
+            .ReturnsAsync(countries);
+        
         HomeController controller =
             new HomeController(_personService, _countriesService);
 
