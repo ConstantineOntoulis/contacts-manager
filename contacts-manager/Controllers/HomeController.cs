@@ -1,4 +1,3 @@
-using Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Rotativa.AspNetCore;
@@ -15,18 +14,23 @@ public class HomeController : Controller
     //private fields
     private readonly IPersonsService _personsService;
     private readonly ICountriesService _countriesService;
+    private readonly ILogger<HomeController> _logger;
     
     //constructor
-    public HomeController(IPersonsService personsService, ICountriesService countriesService)
+    public HomeController(IPersonsService personsService, ICountriesService countriesService, ILogger<HomeController> logger)
     {
         _personsService = personsService;
         _countriesService = countriesService;
+        _logger = logger;
     }
     
     [Route("/")]
     [Route("index")]
     public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
     {
+        _logger.LogInformation("Index action method of HomeController");
+        _logger.LogDebug($"searchBy: {searchBy}, searchString: {searchString}, sortBy: {sortBy}, sortOrder: {sortOrder}");
+        
         //Search
         ViewBag.SearchFields = new Dictionary<string, string>()
         {
