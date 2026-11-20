@@ -45,6 +45,8 @@ if (builder.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+app.UseHttpLogging();
+
 //app.Logger.LogDebug("debug-message");
 //app.Logger.LogInformation("information-message");
 //app.Logger.LogWarning("warning-message");
