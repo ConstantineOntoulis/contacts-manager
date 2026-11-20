@@ -1,5 +1,6 @@
 using System.Globalization;
 using Entities;
+using Microsoft.AspNetCore.HttpLogging;
 using ServiceContracts;
 using Services;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ContactsDb;Integrated Security=True;Encrypt=False
 // Linux Connection String:
 // Server=127.0.0.1,1433;Database=ContactsManagerDb;User Id=sa;Password=ChooseAReallyStrongPassword123!;Encrypt=True;TrustServerCertificate=True;
+
+builder.Services.AddHttpLogging(options =>
+{
+    options.LoggingFields = HttpLoggingFields.RequestProperties | HttpLoggingFields.ResponsePropertiesAndHeaders;
+});
 
 var app = builder.Build();
 
