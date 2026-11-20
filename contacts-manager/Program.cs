@@ -7,10 +7,19 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using RepositoryContracts;
 using Repositories;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //Logging
+//Serilog:
+builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
+{
+    loggerConfiguration.ReadFrom.Configuration(context.Configuration) //reading configuration setting from built-in IConfiguration
+        .ReadFrom.Services(services); //read out current app's services and make them available to Serilog
+});
+
+/* Built-in Logging:
 builder.Host.ConfigureLogging(loggingProvider =>
 {
     loggingProvider.ClearProviders();
@@ -18,6 +27,7 @@ builder.Host.ConfigureLogging(loggingProvider =>
     loggingProvider.AddDebug();
     loggingProvider.AddEventLog();
 });
+*/
 
 ExcelPackage.License.SetNonCommercialPersonal("Tino");
 
