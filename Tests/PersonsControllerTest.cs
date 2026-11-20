@@ -95,7 +95,6 @@ public class PeopleControllerTest
         //personRequest needs to be supplied as an argument to this method
         IActionResult result = await personDetailsController.Create(personRequest);
         
-        
         //Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
 
