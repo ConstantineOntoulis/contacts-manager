@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using RepositoryContracts;
 using Serilog;
+using SerilogTimings;
 using ServiceContracts;
 using ServiceContracts.DTO.PersonDTO;
 using ServiceContracts.Enums;
@@ -97,7 +98,13 @@ public class PersonsService : IPersonsService
         if (string.IsNullOrWhiteSpace(searchBy) ||
             string.IsNullOrWhiteSpace(searchString))
         {
-            List<PersonResponse> people = await GetAllPersons();
+            List<PersonResponse> people;
+
+            using (Operation.Time("Time for Filtered Persons from Database"))
+            {
+                people = await GetAllPersons();
+            }
+            
             _diagnosticContext.Set("People", people);
 
             return people;
@@ -106,8 +113,13 @@ public class PersonsService : IPersonsService
         // Handle date filtering separately
         if (searchBy == nameof(PersonResponse.DateOfBirth))
         {
-            List<PersonResponse> allPeople = await GetAllPersons();
+            List<PersonResponse> allPeople;
 
+            using (Operation.Time("Retrieval Timing: GetPeopleList (DateOfBirth)"))
+            {
+                allPeople = await GetAllPersons();
+            }    
+            
             return allPeople.Where(person =>
                     person.DateOfBirth?.ToString("dd MMM yyyy")
                         .Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
@@ -143,13 +155,30 @@ public class PersonsService : IPersonsService
 
             _ => null
         };
+        
+        // Default case: Return all people if searchBy is invalid
+        if (predicate is null)
+        {
+            List<PersonResponse> allPeople;
+
+            using (Operation.Time("Retrieval Timing: GetAllPersons (Default)"))
+            {
+                allPeople = await GetAllPersons();
+            }
+
+            return allPeople;
+        }
 
         if (predicate == null)
             return await GetAllPersons();
 
         // Retrieve filtered people from the repository
-        List<Person> matchingPeople =
-            await _personsRepository.GetFilteredPersons(predicate);
+        List<Person> matchingPeople;
+
+        using (Operation.Time("Time for Filtered Persons from Database"))
+        {
+            matchingPeople = await _personsRepository.GetFilteredPersons(predicate);
+        }
 
         _diagnosticContext.Set("Persons", matchingPeople);
         
