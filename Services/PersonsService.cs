@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using RepositoryContracts;
+using Serilog;
 using ServiceContracts;
 using ServiceContracts.DTO.PersonDTO;
 using ServiceContracts.Enums;
@@ -20,12 +21,14 @@ public class PersonsService : IPersonsService
     private readonly IPersonsRepository _personsRepository;
     //private readonly ICountriesService _countriesService;
     private readonly ILogger<PersonsService> _logger;
+    private readonly IDiagnosticContext _diagnosticContext;
 
     //constructor
-    public PersonsService(IPersonsRepository personsRepository, ILogger<PersonsService> logger)
+    public PersonsService(IPersonsRepository personsRepository, ILogger<PersonsService> logger, IDiagnosticContext diagnosticContext)
     {
         _personsRepository = personsRepository;
         _logger = logger;
+        _diagnosticContext = diagnosticContext;
     }
 
     public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
@@ -94,7 +97,10 @@ public class PersonsService : IPersonsService
         if (string.IsNullOrWhiteSpace(searchBy) ||
             string.IsNullOrWhiteSpace(searchString))
         {
-            return await GetAllPersons();
+            List<PersonResponse> people = await GetAllPersons();
+            _diagnosticContext.Set("People", people);
+
+            return people;
         }
 
         // Handle date filtering separately
@@ -145,6 +151,8 @@ public class PersonsService : IPersonsService
         List<Person> matchingPeople =
             await _personsRepository.GetFilteredPersons(predicate);
 
+        _diagnosticContext.Set("Persons", matchingPeople);
+        
         // Convert Person entities into PersonResponse objects
         return matchingPeople
             .Select(person => person.ToPersonResponse())
