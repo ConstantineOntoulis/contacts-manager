@@ -11,7 +11,6 @@ public class Person
   
     [Key]
     public Guid PersonID { get; set; }
-    
     [StringLength(40)] //nvarchar(40)
     public string? PersonName { get; set; }
     [StringLength(40)]
@@ -28,4 +27,9 @@ public class Person
     
     [ForeignKey("CountryID")]
     public Country? Country { get; set; }
+    
+    public override string ToString()
+    {
+        return $"Person ID: {PersonID}, Person Name: {PersonName}, Email: {Email}, Date of Birth: {DateOfBirth?.ToString("dd MMM yyyy")}, Gender: {Gender}, CountryID: {CountryID}, Address: {Address}, ReceiveNewsLetters: {ReceiveNewsLetters}";
+    }
 }
