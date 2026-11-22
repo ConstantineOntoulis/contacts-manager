@@ -1,3 +1,4 @@
+using contacts.Filters.ActionFilters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Rotativa.AspNetCore;
@@ -26,6 +27,7 @@ public class HomeController : Controller
     
     [Route("/")]
     [Route("index")]
+    [TypeFilter(typeof(PersonsListActionFilter))]
     public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
     {
         _logger.LogInformation("Index action method of HomeController");
