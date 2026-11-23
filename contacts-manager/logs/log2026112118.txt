@@ -1,0 +1,172 @@
+2026-11-21 18:04:21.249 +02:00 [INF] User profile is available. Using 'C:\Users\Philis\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-11-21 18:04:21.724 +02:00 [INF] Now listening on: http://localhost:5096
+2026-11-21 18:04:21.732 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-11-21 18:04:21.735 +02:00 [INF] Hosting environment: Development
+2026-11-21 18:04:21.737 +02:00 [INF] Content root path: C:\Users\Philis\RiderProjects\xUnit\contacts-manager
+2026-11-21 18:04:25.615 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5096/ - null null
+2026-11-21 18:04:25.672 +02:00 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /
+2026-11-21 18:04:25.714 +02:00 [INF] Executing endpoint 'contacts.HomeController.Index (contacts-manager)'
+2026-11-21 18:04:25.837 +02:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index(System.String, System.String, System.String, ServiceContracts.Enums.SortOrderOptions) on controller contacts.HomeController (contacts-manager).
+2026-11-21 18:04:26.430 +02:00 [INF] Executing action method contacts.HomeController.Index (contacts-manager) - Validation state: "Invalid"
+2026-11-21 18:04:26.446 +02:00 [INF] Index action method of HomeController
+2026-11-21 18:04:26.538 +02:00 [INF] GetFilteredPersons of PersonsService
+2026-11-21 18:04:26.544 +02:00 [INF] GetAllPersons of PersonsService
+2026-11-21 18:04:26.550 +02:00 [INF] GetAllPersons of PersonsRepository
+2026-11-21 18:04:30.346 +02:00 [INF] Executed DbCommand (47ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[PersonID], [p].[Address], [p].[CountryID], [p].[DateOfBirth], [p].[Email], [p].[Gender], [p].[PersonName], [p].[ReceiveNewsLetters], [p].[TaxIdentificationNumber], [c].[CountryID], [c].[CountryName]
+FROM [Persons] AS [p]
+LEFT JOIN [Countries] AS [c] ON [p].[CountryID] = [c].[CountryID]
+2026-11-21 18:04:30.648 +02:00 [INF] GetSortedPeople of PersonsService
+2026-11-21 18:04:30.671 +02:00 [INF] Executed action method contacts.HomeController.Index (contacts-manager), returned result Microsoft.AspNetCore.Mvc.ViewResult in 4227.8813ms.
+2026-11-21 18:04:30.706 +02:00 [INF] Executing ViewResult, running view Index.
+2026-11-21 18:04:31.089 +02:00 [INF] Executed ViewResult - view Index executed in 388.7254ms.
+2026-11-21 18:04:31.096 +02:00 [INF] Executed action contacts.HomeController.Index (contacts-manager) in 5237.9045ms
+2026-11-21 18:04:31.101 +02:00 [INF] Executed endpoint 'contacts.HomeController.Index (contacts-manager)'
+2026-11-21 18:04:31.110 +02:00 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Sat, 21 Nov 2026 16:04:30 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+2026-11-21 18:04:31.122 +02:00 [INF] HTTP GET / responded 200 in 5461.3184 ms
+2026-11-21 18:04:31.173 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5096/ - 200 null text/html; charset=utf-8 5589.8039ms
+2026-11-21 18:04:52.377 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5096/persons/index?searchBy=Gender&searchString=fe - null null
+2026-11-21 18:04:52.384 +02:00 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /persons/index
+2026-11-21 18:04:52.388 +02:00 [INF] Executing endpoint 'contacts.HomeController.Index (contacts-manager)'
+2026-11-21 18:04:52.401 +02:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index(System.String, System.String, System.String, ServiceContracts.Enums.SortOrderOptions) on controller contacts.HomeController (contacts-manager).
+2026-11-21 18:04:52.416 +02:00 [INF] Executing action method contacts.HomeController.Index (contacts-manager) - Validation state: "Valid"
+2026-11-21 18:04:52.419 +02:00 [INF] Index action method of HomeController
+2026-11-21 18:04:52.421 +02:00 [INF] GetFilteredPersons of PersonsService
+2026-11-21 18:04:52.424 +02:00 [INF] GetFilteredPersons of PersonsRepository
+2026-11-21 18:04:52.635 +02:00 [INF] Executed DbCommand (54ms) [Parameters=[@searchTerm_contains='?' (Size = 25)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[PersonID], [p].[Address], [p].[CountryID], [p].[DateOfBirth], [p].[Email], [p].[Gender], [p].[PersonName], [p].[ReceiveNewsLetters], [p].[TaxIdentificationNumber], [c].[CountryID], [c].[CountryName]
+FROM [Persons] AS [p]
+LEFT JOIN [Countries] AS [c] ON [p].[CountryID] = [c].[CountryID]
+WHERE [p].[Gender] IS NOT NULL AND LOWER([p].[Gender]) LIKE @searchTerm_contains ESCAPE N'\'
+2026-11-21 18:04:52.651 +02:00 [INF] GetSortedPeople of PersonsService
+2026-11-21 18:04:52.654 +02:00 [INF] Executed action method contacts.HomeController.Index (contacts-manager), returned result Microsoft.AspNetCore.Mvc.ViewResult in 234.6737ms.
+2026-11-21 18:04:52.659 +02:00 [INF] Executing ViewResult, running view Index.
+2026-11-21 18:04:52.683 +02:00 [INF] Executed ViewResult - view Index executed in 24.1685ms.
+2026-11-21 18:04:52.688 +02:00 [INF] Executed action contacts.HomeController.Index (contacts-manager) in 282.5502ms
+2026-11-21 18:04:52.694 +02:00 [INF] Executed endpoint 'contacts.HomeController.Index (contacts-manager)'
+2026-11-21 18:04:52.700 +02:00 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Sat, 21 Nov 2026 16:04:51 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+2026-11-21 18:04:52.706 +02:00 [INF] HTTP GET /persons/index responded 200 in 321.7657 ms
+2026-11-21 18:04:52.719 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5096/persons/index?searchBy=Gender&searchString=fe - 200 null text/html; charset=utf-8 342.7809ms
+2026-11-21 18:06:49.981 +02:00 [INF] Application is shutting down...
+2026-11-21 18:12:33.650 +02:00 [INF] User profile is available. Using 'C:\Users\Philis\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-11-21 18:12:33.934 +02:00 [INF] Now listening on: http://localhost:5096
+2026-11-21 18:12:33.947 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-11-21 18:12:33.954 +02:00 [INF] Hosting environment: Development
+2026-11-21 18:12:33.957 +02:00 [INF] Content root path: C:\Users\Philis\RiderProjects\xUnit\contacts-manager
+2026-11-21 18:12:34.120 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5096/ - null null
+2026-11-21 18:12:34.173 +02:00 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /
+2026-11-21 18:12:34.215 +02:00 [INF] Executing endpoint 'contacts.HomeController.Index (contacts-manager)'
+2026-11-21 18:12:34.318 +02:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index(System.String, System.String, System.String, ServiceContracts.Enums.SortOrderOptions) on controller contacts.HomeController (contacts-manager).
+2026-11-21 18:12:34.638 +02:00 [INF] Executing action method contacts.HomeController.Index (contacts-manager) - Validation state: "Invalid"
+2026-11-21 18:12:34.649 +02:00 [INF] Index action method of HomeController
+2026-11-21 18:12:34.737 +02:00 [INF] GetFilteredPersons of PersonsService
+2026-11-21 18:12:34.741 +02:00 [INF] GetAllPersons of PersonsService
+2026-11-21 18:12:34.746 +02:00 [INF] GetAllPersons of PersonsRepository
+2026-11-21 18:12:41.163 +02:00 [INF] Executed DbCommand (142ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[PersonID], [p].[Address], [p].[CountryID], [p].[DateOfBirth], [p].[Email], [p].[Gender], [p].[PersonName], [p].[ReceiveNewsLetters], [p].[TaxIdentificationNumber], [c].[CountryID], [c].[CountryName]
+FROM [Persons] AS [p]
+LEFT JOIN [Countries] AS [c] ON [p].[CountryID] = [c].[CountryID]
+2026-11-21 18:12:41.510 +02:00 [INF] GetSortedPeople of PersonsService
+2026-11-21 18:12:41.532 +02:00 [INF] Executed action method contacts.HomeController.Index (contacts-manager), returned result Microsoft.AspNetCore.Mvc.ViewResult in 6882.3401ms.
+2026-11-21 18:12:41.572 +02:00 [INF] Executing ViewResult, running view Index.
+2026-11-21 18:12:41.991 +02:00 [INF] Executed ViewResult - view Index executed in 425.1805ms.
+2026-11-21 18:12:42.001 +02:00 [INF] Executed action contacts.HomeController.Index (contacts-manager) in 7678.2808ms
+2026-11-21 18:12:42.008 +02:00 [INF] Executed endpoint 'contacts.HomeController.Index (contacts-manager)'
+2026-11-21 18:12:42.018 +02:00 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Sat, 21 Nov 2026 16:12:40 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+2026-11-21 18:12:42.035 +02:00 [INF] HTTP GET / responded 200 in 7870.0185 ms
+2026-11-21 18:12:42.120 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5096/ - 200 null text/html; charset=utf-8 8028.0448ms
+2026-11-21 18:12:49.505 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5096/persons/index?searchBy=Gender&searchString=fe - null null
+2026-11-21 18:12:49.514 +02:00 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /persons/index
+2026-11-21 18:12:49.519 +02:00 [INF] Executing endpoint 'contacts.HomeController.Index (contacts-manager)'
+2026-11-21 18:12:49.536 +02:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index(System.String, System.String, System.String, ServiceContracts.Enums.SortOrderOptions) on controller contacts.HomeController (contacts-manager).
+2026-11-21 18:12:49.561 +02:00 [INF] Executing action method contacts.HomeController.Index (contacts-manager) - Validation state: "Valid"
+2026-11-21 18:12:49.565 +02:00 [INF] Index action method of HomeController
+2026-11-21 18:12:49.567 +02:00 [INF] GetFilteredPersons of PersonsService
+2026-11-21 18:12:49.570 +02:00 [INF] GetFilteredPersons of PersonsRepository
+2026-11-21 18:12:49.784 +02:00 [INF] Executed DbCommand (50ms) [Parameters=[@searchTerm_contains='?' (Size = 25)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[PersonID], [p].[Address], [p].[CountryID], [p].[DateOfBirth], [p].[Email], [p].[Gender], [p].[PersonName], [p].[ReceiveNewsLetters], [p].[TaxIdentificationNumber], [c].[CountryID], [c].[CountryName]
+FROM [Persons] AS [p]
+LEFT JOIN [Countries] AS [c] ON [p].[CountryID] = [c].[CountryID]
+WHERE [p].[Gender] IS NOT NULL AND LOWER([p].[Gender]) LIKE @searchTerm_contains ESCAPE N'\'
+2026-11-21 18:12:49.796 +02:00 [INF] GetSortedPeople of PersonsService
+2026-11-21 18:12:49.798 +02:00 [INF] Executed action method contacts.HomeController.Index (contacts-manager), returned result Microsoft.AspNetCore.Mvc.ViewResult in 233.7765ms.
+2026-11-21 18:12:49.802 +02:00 [INF] Executing ViewResult, running view Index.
+2026-11-21 18:12:49.820 +02:00 [INF] Executed ViewResult - view Index executed in 18.2439ms.
+2026-11-21 18:12:49.827 +02:00 [INF] Executed action contacts.HomeController.Index (contacts-manager) in 287.5812ms
+2026-11-21 18:12:49.833 +02:00 [INF] Executed endpoint 'contacts.HomeController.Index (contacts-manager)'
+2026-11-21 18:12:49.838 +02:00 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Sat, 21 Nov 2026 16:12:49 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+2026-11-21 18:12:49.843 +02:00 [INF] HTTP GET /persons/index responded 200 in 328.9816 ms
+2026-11-21 18:12:49.852 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5096/persons/index?searchBy=Gender&searchString=fe - 200 null text/html; charset=utf-8 348.5837ms
+2026-11-21 18:13:23.546 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5096/persons/index - null null
+2026-11-21 18:13:23.564 +02:00 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /persons/index
+2026-11-21 18:13:23.574 +02:00 [INF] Executing endpoint 'contacts.HomeController.Index (contacts-manager)'
+2026-11-21 18:13:23.579 +02:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index(System.String, System.String, System.String, ServiceContracts.Enums.SortOrderOptions) on controller contacts.HomeController (contacts-manager).
+2026-11-21 18:13:23.602 +02:00 [INF] Executing action method contacts.HomeController.Index (contacts-manager) - Validation state: "Invalid"
+2026-11-21 18:13:23.608 +02:00 [INF] Index action method of HomeController
+2026-11-21 18:13:23.611 +02:00 [INF] GetFilteredPersons of PersonsService
+2026-11-21 18:13:23.613 +02:00 [INF] GetAllPersons of PersonsService
+2026-11-21 18:13:23.615 +02:00 [INF] GetAllPersons of PersonsRepository
+2026-11-21 18:13:23.765 +02:00 [INF] Executed DbCommand (16ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[PersonID], [p].[Address], [p].[CountryID], [p].[DateOfBirth], [p].[Email], [p].[Gender], [p].[PersonName], [p].[ReceiveNewsLetters], [p].[TaxIdentificationNumber], [c].[CountryID], [c].[CountryName]
+FROM [Persons] AS [p]
+LEFT JOIN [Countries] AS [c] ON [p].[CountryID] = [c].[CountryID]
+2026-11-21 18:13:23.771 +02:00 [INF] GetSortedPeople of PersonsService
+2026-11-21 18:13:23.773 +02:00 [INF] Executed action method contacts.HomeController.Index (contacts-manager), returned result Microsoft.AspNetCore.Mvc.ViewResult in 164.5294ms.
+2026-11-21 18:13:23.776 +02:00 [INF] Executing ViewResult, running view Index.
+2026-11-21 18:13:23.786 +02:00 [INF] Executed ViewResult - view Index executed in 10.1034ms.
+2026-11-21 18:13:23.792 +02:00 [INF] Executed action contacts.HomeController.Index (contacts-manager) in 202.5597ms
+2026-11-21 18:13:23.801 +02:00 [INF] Executed endpoint 'contacts.HomeController.Index (contacts-manager)'
+2026-11-21 18:13:23.806 +02:00 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Sat, 21 Nov 2026 16:13:23 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+2026-11-21 18:13:23.810 +02:00 [INF] HTTP GET /persons/index responded 200 in 245.6153 ms
+2026-11-21 18:13:23.816 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5096/persons/index - 200 null text/html; charset=utf-8 270.411ms
+2026-11-21 18:13:43.252 +02:00 [INF] Application is shutting down...
