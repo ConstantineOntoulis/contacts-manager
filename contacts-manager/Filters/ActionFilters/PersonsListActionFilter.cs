@@ -32,7 +32,7 @@ public class PersonsListActionFilter : IActionFilter
                     nameof(PersonResponse.Gender),
                     nameof(PersonResponse.CountryID),
                     nameof(PersonResponse.ReceiveNewsLetters)
-                };
+                }; 
 
                 //Reset the searchBy parameter value
                 if (searchByOptions.Contains(searchBy) == false)
@@ -41,7 +41,7 @@ public class PersonsListActionFilter : IActionFilter
                     
                     context.ActionArguments["searchBy"] = nameof(PersonResponse.PersonName);
                     
-                    _logger.LogInformation("searchBy updated value {searchBy}", searchBy);
+                    _logger.LogInformation("searchBy updated value {searchBy}", context.ActionArguments["searchBy"]);
                 }
             }
         }
