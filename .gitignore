@@ -3,3 +3,10 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+
+# JetBrains Rider
+.idea/
+*.DotSettings.user
+
+# Generated application logs
+contacts-manager/logs/
