@@ -10,6 +10,7 @@ using ServiceContracts.Enums;
 namespace contacts;
 
 [Route("persons")]
+[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "X-Custom-Key", "Custom-Value" })]
 public class HomeController : Controller
 {
     //private fields
