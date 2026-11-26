@@ -29,6 +29,7 @@ public class HomeController : Controller
     [Route("/")]
     [Route("index")]
     [TypeFilter(typeof(PersonsListActionFilter))]
+    [TypeFilter(typeof(AsyncResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-AsyncActionMethod", "My-Value-From-AsyncActionMethod" }, Order = 1)]
     [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-ActionMethod", "My-Value-From-ActionMethod" }, Order = 1)]
     public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
     {
