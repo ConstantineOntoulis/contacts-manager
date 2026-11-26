@@ -10,7 +10,7 @@ using ServiceContracts.Enums;
 namespace contacts;
 
 [Route("persons")]
-[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller" })]
+[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller" }, Order = 2)]
 public class HomeController : Controller
 {
     //private fields
@@ -29,7 +29,7 @@ public class HomeController : Controller
     [Route("/")]
     [Route("index")]
     [TypeFilter(typeof(PersonsListActionFilter))]
-    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-ActionMethod", "My-Value-From-ActionMethod" })]
+    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-ActionMethod", "My-Value-From-ActionMethod" }, Order = 1)]
     public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
     {
         _logger.LogInformation("Index action method of HomeController");
