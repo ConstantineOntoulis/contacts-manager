@@ -1,6 +1,8 @@
 using System.Globalization;
+using contacts.Filters.ActionFilters;
 using Entities;
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.AspNetCore.Mvc;
 using ServiceContracts;
 using Services;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +35,17 @@ ExcelPackage.License.SetNonCommercialPersonal("Tino");
 
 var culture = new CultureInfo("en-GB");
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new TypeFilterAttribute(typeof(ResponseHeaderActionFilter))
+    {
+        Arguments = new object[]
+        {
+            "My-Key-From-Global",
+            "My-Value-From-Global"
+        }
+    });
+});
 
 //add services into IoC container
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
