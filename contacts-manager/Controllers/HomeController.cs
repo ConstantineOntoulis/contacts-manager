@@ -10,32 +10,38 @@ using ServiceContracts.Enums;
 namespace contacts;
 
 [Route("persons")]
-[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller" }, Order = 2)]
+[TypeFilter(typeof(ResponseHeaderActionFilter),
+    Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller" }, Order = 2)]
 public class HomeController : Controller
 {
     //private fields
     private readonly IPersonsService _personsService;
     private readonly ICountriesService _countriesService;
     private readonly ILogger<HomeController> _logger;
-    
+
     //constructor
-    public HomeController(IPersonsService personsService, ICountriesService countriesService, ILogger<HomeController> logger)
+    public HomeController(IPersonsService personsService, ICountriesService countriesService,
+        ILogger<HomeController> logger)
     {
         _personsService = personsService;
         _countriesService = countriesService;
         _logger = logger;
     }
-    
+
     [Route("/")]
     [Route("index")]
     [TypeFilter(typeof(PersonsListActionFilter))]
-    [TypeFilter(typeof(AsyncResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-AsyncActionMethod", "My-Value-From-AsyncActionMethod" }, Order = 1)]
-    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-ActionMethod", "My-Value-From-ActionMethod" }, Order = 1)]
-    public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
+    [TypeFilter(typeof(AsyncResponseHeaderActionFilter),
+        Arguments = new object[] { "My-Key-From-AsyncActionMethod", "My-Value-From-AsyncActionMethod" }, Order = 1)]
+    [TypeFilter(typeof(ResponseHeaderActionFilter),
+        Arguments = new object[] { "My-Key-From-ActionMethod", "My-Value-From-ActionMethod" }, Order = 1)]
+    public async Task<IActionResult> Index(string searchBy, string? searchString,
+        string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
     {
         _logger.LogInformation("Index action method of HomeController");
-        _logger.LogDebug($"searchBy: {searchBy}, searchString: {searchString}, sortBy: {sortBy}, sortOrder: {sortOrder}");
-        
+        _logger.LogDebug(
+            $"searchBy: {searchBy}, searchString: {searchString}, sortBy: {sortBy}, sortOrder: {sortOrder}");
+
         //Search
         ViewBag.SearchFields = new Dictionary<string, string>()
         {
@@ -46,16 +52,16 @@ public class HomeController : Controller
             { nameof(PersonResponse.CountryID), "Country" },
             { nameof(PersonResponse.Address), "Address" }
         };
-        
+
         List<PersonResponse> persons = await _personsService.GetFilteredPersons(searchBy, searchString);
         ViewBag.CurrentSearchBy = searchBy;
         ViewBag.CurrentSearchString = searchString;
-        
+
         //Sort
         List<PersonResponse> sortedPeople = await _personsService.GetSortedPeople(persons, sortBy, sortOrder);
         ViewBag.CurrentSortBy = sortBy;
         ViewBag.CurrentSortOrder = sortOrder.ToString();
-        
+
         return View(sortedPeople); //Views/Home/Index.cshtml
     }
 
@@ -77,7 +83,7 @@ public class HomeController : Controller
             Value = "123"
         };*/
         //this is like writing <option value="123">Greece</option>
-        
+
         return View();
     }
 
@@ -88,21 +94,26 @@ public class HomeController : Controller
         if (!ModelState.IsValid)
         {
             List<CountryResponse> countries = await _countriesService.GetAllCountries();
-        
-            ViewBag.Countries = countries.Select(temp => new SelectListItem()
-            {
-                Text = temp.CountryName,
-                Value = temp.CountryID.ToString()
-            }).ToList();
-            
-            ViewBag.Errors = ModelState.Values.SelectMany(x => x.Errors).Select(e => e.ErrorMessage).ToList();
-            
+
+            ViewBag.Countries = countries
+                .Select(temp => new SelectListItem()
+                {
+                    Text = temp.CountryName,
+                    Value = temp.CountryID
+                        .ToString()
+                }).ToList();
+
+            ViewBag.Errors = ModelState.Values
+                .SelectMany(x => x.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+
             return View("CreatePerson", personAddRequest);
         }
-        
+
         //call the service method
         PersonResponse personResponse = await _personsService.AddPerson(personAddRequest);
-        
+
         //navigate to Index() action method (it makes another get request to "persons/index"
         return RedirectToAction("Index", "Home");
     }
@@ -119,7 +130,7 @@ public class HomeController : Controller
         }
 
         PersonUpdateRequest personUpdateRequest = personResponse.ToPersonUpdateRequest();
-        
+
         List<CountryResponse> countries = await _countriesService.GetAllCountries();
 
         ViewBag.Countries = countries.Select(temp => new SelectListItem()
@@ -127,9 +138,9 @@ public class HomeController : Controller
             Text = temp.CountryName,
             Value = temp.CountryID.ToString()
         }).ToList();
-            
+
         ViewBag.Errors = ModelState.Values.SelectMany(x => x.Errors).Select(e => e.ErrorMessage).ToList();
-        
+
         return View("EditPerson", personUpdateRequest);
     }
 
@@ -152,13 +163,13 @@ public class HomeController : Controller
         else
         {
             List<CountryResponse> countries = await _countriesService.GetAllCountries();
-        
+
             ViewBag.Countries = countries.Select(temp => new SelectListItem()
             {
                 Text = temp.CountryName,
                 Value = temp.CountryID.ToString()
             }).ToList();
-            
+
             ViewBag.Errors = ModelState.Values.SelectMany(x => x.Errors).Select(e => e.ErrorMessage).ToList();
 
             return View("EditPerson", personUpdateRequest);
@@ -175,7 +186,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Index");
         }
-        
+
         return View("DeletePerson", personResponse);
     }
 
@@ -191,7 +202,7 @@ public class HomeController : Controller
         }
 
         await _personsService.DeletePerson(personUpdateRequest.PersonID);
-        
+
         return RedirectToAction("Index");
     }
 
@@ -200,7 +211,7 @@ public class HomeController : Controller
     {
         //Get list of persons
         List<PersonResponse> persons = await _personsService.GetAllPersons();
-        
+
         //Return view as pdf
         return new ViewAsPdf("PersonsPDF", persons, ViewData)
         {
@@ -222,7 +233,7 @@ public class HomeController : Controller
 
         return File(memoryStream, "application/octet-stream", "persons.csv");
     }
-    
+
     [Route("/PersonsExcel")]
     public async Task<IActionResult> PersonsExcel()
     {
